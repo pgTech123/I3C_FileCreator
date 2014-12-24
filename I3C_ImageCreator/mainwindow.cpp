@@ -137,7 +137,7 @@ void MainWindow::on_actionNew_triggered()
     if(tryToClearImage()){
         /* Create a new Image */
         m_NewImageDialogWindow = new NewImageDialog();
-        m_NewImageDialogWindow->setPtrToImage(m_Image);
+        m_NewImageDialogWindow->setPtrToImage(&m_Image);
         m_NewImageDialogWindow->show();
     }
 }
@@ -156,7 +156,9 @@ void MainWindow::on_actionSave_triggered()
 {
     if(isImage()){
         if(m_Image->isPath()){
-            m_Image->save();
+            if(!m_Image->save()){
+                on_actionSave_As_triggered();
+            }
         }
         else{
             on_actionSave_As_triggered();
@@ -172,7 +174,7 @@ void MainWindow::on_actionSave_As_triggered()
         QString path = QFileDialog::getSaveFileName(this, "Save Image As...",
                                                 QString(), "3D Image (*.i3c)");
         m_Image->setPath(path.toStdString().c_str());
-        on_actionSave_triggered();
+        m_Image->save();
     }
 }
 

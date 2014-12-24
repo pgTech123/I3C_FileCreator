@@ -6,8 +6,10 @@ class Image
 public:
     Image();
 
+    void initializeEmpty();
+    void setSideSize(int sideSize);
     void setPath(const char* path);
-    void save();
+    bool save();
 
     bool isPath();
 };

@@ -4,17 +4,27 @@ Image::Image()
 {
 }
 
+void Image::initializeEmpty()
+{
+
+}
+
+void Image::setSideSize(int sideSize)
+{
+
+}
+
 void Image::setPath(const char* path)
 {
 
 }
 
-void Image::save()
+bool Image::save()
 {
-
+    return true;
 }
 
 bool Image::isPath()
 {
-    return false;
+    return true;
 }
