@@ -9,6 +9,11 @@
 
 #include <QMainWindow>
 #include <QCloseEvent>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QString>
+#include "image.h"
+#include "newimagedialog.h"
 #include "aboutus.h"
 
 /************************************************************************
@@ -36,6 +41,14 @@ private:
     /* Initialisation */
     void initMainWindow();
 
+    bool isImage();
+    bool tryToClearImage();
+
+public slots:
+    void enableUndo(bool enabled);
+    void enableRedo(bool enabled);
+    void changeRequested();
+
 private slots:
     /* Menu File */
     void on_actionNew_triggered();
@@ -51,10 +64,22 @@ private slots:
     /* Menu Help */
     void on_actionAbout_Us_triggered();
 
+signals:
+    void undoSignal();
+    void redoSignal();
+
 private:
     Ui::MainWindow *ui;
 
+    /* Status Variable */
     bool m_bAllChangesSaved;
+
+    /* Data Variables */
+    Image * m_Image;
+
+    /* Subwindow */
+    NewImageDialog *m_NewImageDialogWindow;
+    AboutUs m_AboutUsWindow;
 };
 
 #endif // MAINWINDOW_H
