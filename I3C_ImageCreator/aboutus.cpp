@@ -1,3 +1,9 @@
+/*********************************************************
+ * AboutUs.cpp
+ * Author: Pascal Gendron
+ * Version:     0.0.1
+ * *******************************************************/
+
 #include "aboutus.h"
 #include "ui_aboutus.h"
 
