@@ -6,7 +6,8 @@ SOURCES += \
     mainwindow.cpp \
     aboutus.cpp \
     image.cpp \
-    newimagedialog.cpp
+    newimagedialog.cpp \
+    layerstack.cpp
 
 FORMS += \
     mainwindow.ui \
@@ -17,4 +18,5 @@ HEADERS += \
     mainwindow.h \
     aboutus.h \
     image.h \
-    newimagedialog.h
+    newimagedialog.h \
+    layerstack.h

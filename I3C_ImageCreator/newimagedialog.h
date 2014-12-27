@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QString>
 #include "image.h"
+#include "layerstack.h"
 
 /************************************************************************
  * The purpose of this class is to create the UI to facilitate the creation
@@ -40,6 +41,7 @@ public:
 
     /* Public functions */
     void setPtrToImage(Image** imgPtr);
+    void setPtrToLayerStack(LayerStack** layerStackPtr);
 
 private:
     bool SavingInfoValid();
@@ -50,7 +52,8 @@ private slots:
 private:
     Ui::NewImageDialog *ui;
 
-    Image **ptrImage;
+    Image **m_ptrImage;
+    LayerStack **m_ptrLayerStack;
 };
 
 #endif // NEWIMAGEDIALOG_H
