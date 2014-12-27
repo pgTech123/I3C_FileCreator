@@ -1,6 +1,6 @@
 /*********************************************************
  * NewImageDialog.cpp
- * Author: Pascal Gendron
+ * Author:      Pascal Gendron
  * Version:     0.0.1
  * *******************************************************/
 
@@ -26,17 +26,22 @@ void NewImageDialog::accept()
     int sideSize = ui->comboBoxSize->currentText().toInt();
 
     /* Create Image */
-    *ptrImage = new Image();
+    *m_ptrImage = new Image();
 
     /* Set Image Properties */
-    (*ptrImage)->setSideSize(sideSize);
-    (*ptrImage)->initializeEmpty();
+    (*m_ptrImage)->setSideSize(sideSize);
+    (*m_ptrImage)->initializeEmpty();
     if(SavingInfoValid()){
         /* Concat and convert strings */
         QString pathQString = ui->lineEditPath->text() + "/" + ui->lineEditFileName->text() + ".i3c";
         const char* path  = pathQString.toStdString().c_str();
-        (*ptrImage)->setPath(path);
+        (*m_ptrImage)->setPath(path);
     }
+
+    /* Create Layer Stack */
+    *m_ptrLayerStack = new LayerStack();
+    (*m_ptrLayerStack)->setSideSize(sideSize);
+
     /* Close the window */
     this->close();
 }
@@ -54,7 +59,12 @@ void NewImageDialog::closeEvent(QCloseEvent*)
 /* Public Functions */
 void NewImageDialog::setPtrToImage(Image **imgPtr)
 {
-    ptrImage = imgPtr;
+    m_ptrImage = imgPtr;
+}
+
+void NewImageDialog::setPtrToLayerStack(LayerStack** layerStackPtr)
+{
+    m_ptrLayerStack = layerStackPtr;
 }
 
 bool NewImageDialog::SavingInfoValid()

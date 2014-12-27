@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->centralwidget->setLayout(ui->gridLayout);
     initMainWindow();
 }
 
@@ -21,6 +22,10 @@ MainWindow::~MainWindow()
 
     if(m_Image != NULL){
         delete m_Image;
+    }
+    if(m_LayerStack != NULL)
+    {
+        delete m_LayerStack;
     }
 }
 
@@ -69,6 +74,7 @@ void MainWindow::initMainWindow()
     ui->actionRedo->setDisabled(true);
 
     m_Image = NULL;
+    m_LayerStack = NULL;
 }
 
 bool MainWindow::isImage()
@@ -109,7 +115,9 @@ bool MainWindow::tryToClearImage()
         }
         /* Delete it */
         delete m_Image;
+        delete m_LayerStack;
         m_Image = NULL;
+        m_LayerStack = NULL;
     }
     return true;
 }
@@ -138,6 +146,7 @@ void MainWindow::on_actionNew_triggered()
         /* Create a new Image */
         m_NewImageDialogWindow = new NewImageDialog();
         m_NewImageDialogWindow->setPtrToImage(&m_Image);
+        m_NewImageDialogWindow->setPtrToLayerStack(&m_LayerStack);
         m_NewImageDialogWindow->show();
     }
 }
@@ -148,7 +157,8 @@ void MainWindow::on_actionOpen_triggered()
     {
         QString path = QFileDialog::getOpenFileName(this, "Load an Image",
                                                   QString(), "3D Image(*.i3c)");
-        m_Image->setPath(path.toStdString().c_str());
+        m_Image = new Image(path.toStdString().c_str());
+        m_Image->convertImageToLayerStack(&m_LayerStack);
     }
 }
 
@@ -156,6 +166,7 @@ void MainWindow::on_actionSave_triggered()
 {
     if(isImage()){
         if(m_Image->isPath()){
+            m_Image->convertLayerStackToImage(m_LayerStack);
             if(!m_Image->save()){
                 on_actionSave_As_triggered();
             }
@@ -174,6 +185,7 @@ void MainWindow::on_actionSave_As_triggered()
         QString path = QFileDialog::getSaveFileName(this, "Save Image As...",
                                                 QString(), "3D Image (*.i3c)");
         m_Image->setPath(path.toStdString().c_str());
+        m_Image->convertLayerStackToImage(m_LayerStack);
         m_Image->save();
     }
 }

@@ -12,8 +12,9 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QString>
-#include "image.h"
 #include "newimagedialog.h"
+#include "layerstack.h"
+#include "image.h"
 #include "aboutus.h"
 
 /************************************************************************
@@ -75,7 +76,8 @@ private:
     bool m_bAllChangesSaved;
 
     /* Data Variables */
-    Image * m_Image;
+    Image *m_Image;
+    LayerStack *m_LayerStack;
 
     /* Subwindow */
     NewImageDialog *m_NewImageDialogWindow;
