@@ -20,6 +20,7 @@ public:
     void setPath(const char* path);
     bool save();
     bool isPath();
+    int open();
 
     /* Image Modif */
     void setSideSize(int sideSize);

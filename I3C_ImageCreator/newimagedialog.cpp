@@ -12,6 +12,7 @@ NewImageDialog::NewImageDialog(QWidget *parent) :
     ui(new Ui::NewImageDialog)
 {
     ui->setupUi(this);
+    m_parent = parent;
 }
 
 NewImageDialog::~NewImageDialog()
@@ -40,6 +41,7 @@ void NewImageDialog::accept()
 
     /* Create Layer Stack */
     *m_ptrLayerStack = new LayerStack();
+    emit connectLayerStack();
     (*m_ptrLayerStack)->setSideSize(sideSize);
 
     /* Close the window */

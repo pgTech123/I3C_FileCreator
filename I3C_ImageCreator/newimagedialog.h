@@ -43,6 +43,9 @@ public:
     void setPtrToImage(Image** imgPtr);
     void setPtrToLayerStack(LayerStack** layerStackPtr);
 
+signals:
+    void connectLayerStack();
+
 private:
     bool SavingInfoValid();
 
@@ -51,6 +54,7 @@ private slots:
 
 private:
     Ui::NewImageDialog *ui;
+    QWidget *m_parent;
 
     Image **m_ptrImage;
     LayerStack **m_ptrLayerStack;

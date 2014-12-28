@@ -15,7 +15,13 @@
 #include "newimagedialog.h"
 #include "layerstack.h"
 #include "image.h"
+#include "paintingwindow.h"
 #include "aboutus.h"
+
+/*DEBUG PURPOSE*/
+#include <iostream>
+using namespace std;
+/*END DEBUG*/
 
 /************************************************************************
  * The purpose of this class is to create the UI of the main window and
@@ -38,6 +44,7 @@ public:
     /* Events */
     void closeEvent(QCloseEvent* event);
 
+
 private:
     /* Initialisation */
     void initMainWindow();
@@ -45,10 +52,16 @@ private:
     bool isImage();
     bool tryToClearImage();
 
+    void deleteM_Image();
+    void deleteM_LayerStack();
+
+
 public slots:
     void enableUndo(bool enabled);
     void enableRedo(bool enabled);
     void changeRequested();
+
+    void initDisplayLayerStack();
 
 private slots:
     /* Menu File */
@@ -62,8 +75,21 @@ private slots:
     void on_actionUndo_triggered();
     void on_actionRedo_triggered();
 
+    /* Menu View */
+    void on_actionPainting_Window_triggered();
+
     /* Menu Help */
     void on_actionAbout_Us_triggered();
+
+    /* Buttons */
+    void on_pushButtonPrevious_clicked();
+    void on_pushButtonNext_clicked();
+    void setCurrentLayer(int currentLayer);
+
+    /* Other Slots */
+    void connectLayerStack();
+
+    void paintingWindowClosed();
 
 signals:
     void undoSignal();
@@ -81,6 +107,7 @@ private:
 
     /* Subwindow */
     NewImageDialog *m_NewImageDialogWindow;
+    PaintingWindow m_PaintingWindow;
     AboutUs m_AboutUsWindow;
 };
 

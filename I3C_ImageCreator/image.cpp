@@ -32,6 +32,11 @@ bool Image::isPath()
     return false;
 }
 
+int Image::open()
+{
+    return 0;
+}
+
 void Image::initializeEmpty()
 {
     /* Create Minimum Viable File */
@@ -49,7 +54,7 @@ int Image::convertLayerStackToImage(LayerStack *layerStack)
 
 int Image::convertImageToLayerStack(LayerStack **ptrLayerStack)
 {
-
+    (*ptrLayerStack)->setSideSize(16);
 }
 
 
