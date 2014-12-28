@@ -1,3 +1,10 @@
+/*********************************************************
+ * LayerStack.cpp
+ * Author:      Pascal Gendron
+ * Version:     0.0.1
+ * *******************************************************/
+
+
 #include "layerstack.h"
 
 LayerStack::LayerStack(QWidget *parent):

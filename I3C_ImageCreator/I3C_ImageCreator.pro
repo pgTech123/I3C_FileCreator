@@ -9,7 +9,8 @@ SOURCES += \
     newimagedialog.cpp \
     layerstack.cpp \
     layer.cpp \
-    paintingwindow.cpp
+    paintingwindow.cpp \
+    colorpad.cpp
 
 FORMS += \
     mainwindow.ui \
@@ -24,4 +25,5 @@ HEADERS += \
     newimagedialog.h \
     layerstack.h \
     layer.h \
-    paintingwindow.h
+    paintingwindow.h \
+    colorpad.h
