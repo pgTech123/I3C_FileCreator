@@ -172,7 +172,7 @@ void MainWindow::initDisplayLayerStack()
         ui->horizontalSliderLayer->setEnabled(true);
 
         /* Connect */
-        ui->horizontalSliderLayer->setMaximum(m_LayerStack->getSideSize());
+        ui->horizontalSliderLayer->setMaximum(m_LayerStack->getSideSize()-1);
         connect(ui->horizontalSliderLayer,SIGNAL(valueChanged(int)), m_LayerStack, SLOT(goToLayer(int)));
         connect(ui->horizontalSliderLayer,SIGNAL(valueChanged(int)), this, SLOT(setCurrentLayer(int)));
         connect(&m_PaintingWindow,SIGNAL(selectedColor(int,int,int)), m_LayerStack, SLOT(setActiveColor(int,int,int)));
