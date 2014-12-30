@@ -12,9 +12,15 @@ LayerStack::LayerStack(QWidget *parent):
 {
     m_frame = NULL;
     m_LayerArray = NULL;
+    m_Painter = new QPainter();
     m_bSideSizeSet = false;
     m_bMouseButtonDwn = false;
     m_iCurrentLayer = 0;
+
+    /* Init Color to Black */
+    m_iRed = 0;
+    m_iGreen = 0;
+    m_iBlue = 0;
 }
 
 LayerStack::~LayerStack()
@@ -25,20 +31,25 @@ LayerStack::~LayerStack()
     if(m_LayerArray != NULL){
         delete[] m_LayerArray;
     }
+    delete m_Painter;
 }
 
 void LayerStack::resizeEvent(QResizeEvent*)
 {
-    /* x 0.8 to be able to size down */
-    int newHeight = this->height()*0.8;
-    int newWidth = this->width()*0.8;
+    if(m_bSideSizeSet){
+        /* x 0.8 to be able to size down */
+        int newHeight = this->height()*0.8;
+        int newWidth = this->width()*0.8;
 
-    /* As we draw on this image, we dont want to unzoom too much */
-    if(newWidth >= m_iSideSize && newHeight >= m_iSideSize){
-        (*m_frame) = m_frame->scaled(newWidth, newHeight, Qt::KeepAspectRatio);
-        QLabel::setPixmap(*m_frame);
+        /* As we draw on this image, we dont want to unzoom too much */
+        if(newWidth >= m_iSideSize && newHeight >= m_iSideSize){
+            m_PixmapScaled = m_frame->scaled(newWidth, newHeight, Qt::KeepAspectRatio);
+            QLabel::setPixmap(m_PixmapScaled);
 
-        m_dPixelToPixelFactor = (double)m_iSideSize / (double)m_frame->width();
+            /* Adjust scale factor between real size of 1 pixel and the size of 1 pix displayed */
+            m_dPixelToPixelFactor = (double)m_iSideSize / (double)m_PixmapScaled.width();
+            m_iOffsetCorrection = m_PixmapScaled.width() * 0.125 * m_dPixelToPixelFactor;
+        }
     }
 }
 
@@ -48,12 +59,12 @@ void LayerStack::mousePressEvent(QMouseEvent *event)
 
     /* Draw on Layer */
     m_LayerArray[m_iCurrentLayer].writePixel(event->x()*m_dPixelToPixelFactor,
-                                             event->y()*m_dPixelToPixelFactor,
+                                             event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
                                              m_iRed,
                                              m_iGreen,
                                              m_iBlue);
     updateDisplayedLayer(event->x()*m_dPixelToPixelFactor,
-                         event->y()*m_dPixelToPixelFactor,
+                         event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
                          m_iRed,
                          m_iGreen,
                          m_iBlue);
@@ -69,12 +80,12 @@ void LayerStack::mouseMoveEvent(QMouseEvent *event)
     if(m_bMouseButtonDwn){
         /* Draw on Layer */
         m_LayerArray[m_iCurrentLayer].writePixel(event->x()*m_dPixelToPixelFactor,
-                                                 event->y()*m_dPixelToPixelFactor,
+                                                 event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
                                                  m_iRed,
                                                  m_iGreen,
                                                  m_iBlue);
         updateDisplayedLayer(event->x()*m_dPixelToPixelFactor,
-                             event->y()*m_dPixelToPixelFactor,
+                             event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
                              m_iRed,
                              m_iGreen,
                              m_iBlue);
@@ -96,10 +107,7 @@ void LayerStack::setSideSize(int sideSize)
 
         /* Create Workspace Pixmap */
         m_frame = new QPixmap(sideSize,sideSize);
-        m_frame->fill(Qt::black);
-
-        /* Set Initial Frame */
-        QLabel::setPixmap(*m_frame);
+        setWorkspaceAsCurrentLayer();
 
         /* Display it in MainWindow */
         emit initLayerStackDisplay();
@@ -168,12 +176,17 @@ void LayerStack::setActiveColor(int red, int green, int blue)
 
 void LayerStack::updateDisplayedLayer(int x, int y, int r, int g, int b)
 {
-    //TODO
-
-    QLabel::setPixmap(*m_frame);
+    m_Painter->begin(m_frame);
+    m_Painter->setPen(QPen(QBrush(QColor(r, g, b)),1));
+    m_Painter->drawPoint(x,y);
+    m_Painter->end();
+    resizeEvent(NULL);
 }
 
 void LayerStack::addPixmapInTransparency(QPixmap *layer)
 {
-    //TODO
+    m_Painter->begin(m_frame);
+    m_Painter->setOpacity(0.3);
+    m_Painter->drawPixmap(0,0, *layer);
+    m_Painter->end();
 }

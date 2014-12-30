@@ -27,7 +27,7 @@ void Layer::setSideSize(int sideSize)
 {
     m_iSideSize = sideSize;
     m_PixmapLayer = new QPixmap(m_iSideSize, m_iSideSize);
-    m_PixmapLayer->fill(Qt::red);   //TODO: Modify to black -> debug purpose only
+    m_PixmapLayer->fill(Qt::black);
     m_Painter = new QPainter(m_PixmapLayer);
 }
 
@@ -38,5 +38,6 @@ QPixmap* Layer::getPixmapPtr()
 
 void Layer::writePixel(int x, int y, int r, int g, int b)
 {
-    //TODO
+    m_Painter->setPen(QPen(QBrush(QColor(r, g, b)),1));
+    m_Painter->drawPoint(x,y);
 }

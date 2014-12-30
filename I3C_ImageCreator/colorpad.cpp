@@ -69,6 +69,7 @@ void ColorPad::setRed(int value)
     m_PixmapColor->fill(QColor(m_red, m_green, m_blue));
     QLabel::setPixmap(*m_PixmapColor);
     drawSelectedContour();
+    emit ImSelected(m_red, m_green, m_blue, m_iId);
 }
 
 void ColorPad::setGreen(int value)
@@ -79,6 +80,7 @@ void ColorPad::setGreen(int value)
     m_PixmapColor->fill(QColor(m_red, m_green, m_blue));
     QLabel::setPixmap(*m_PixmapColor);
     drawSelectedContour();
+    emit ImSelected(m_red, m_green, m_blue, m_iId);
 }
 
 void ColorPad::setBlue(int value)
@@ -89,6 +91,7 @@ void ColorPad::setBlue(int value)
     m_PixmapColor->fill(QColor(m_red, m_green, m_blue));
     QLabel::setPixmap(*m_PixmapColor);
     drawSelectedContour();
+    emit ImSelected(m_red, m_green, m_blue, m_iId);
 }
 
 void ColorPad::unselect()

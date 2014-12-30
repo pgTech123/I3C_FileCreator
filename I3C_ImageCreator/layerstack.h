@@ -73,8 +73,10 @@ private:
     /* Layers */
     int m_iCurrentLayer;
     QPixmap *m_frame;
+    QPixmap m_PixmapScaled;
     QPainter *m_Painter;
     Layer *m_LayerArray;
+    int m_iOffsetCorrection;
 
     /* Drawing */
     int m_iRed;
