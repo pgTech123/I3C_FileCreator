@@ -36,7 +36,7 @@ void NewImageDialog::accept()
         /* Concat and convert strings */
         QString pathQString = ui->lineEditPath->text() + "/" + ui->lineEditFileName->text() + ".i3c";
         const char* path  = pathQString.toStdString().c_str();
-        (*m_ptrImage)->setPath(path);
+        (*m_ptrImage)->save(path);
     }
 
     /* Create Layer Stack */

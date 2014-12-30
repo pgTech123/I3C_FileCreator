@@ -201,9 +201,9 @@ void MainWindow::on_actionOpen_triggered()
         QString path = QFileDialog::getOpenFileName(this, "Load an Image",
                                                   QString(), "3D Image(*.i3c)");
 
-        m_Image = new Image(path.toStdString().c_str());
+        m_Image = new Image();
 
-        if(m_Image->open() == NO_ERRORS){
+        if(m_Image->open(path.toStdString().c_str()) == NO_ERRORS){
             /* Load image in the layerStack */
             m_LayerStack = new LayerStack(this);
             connect(m_LayerStack,SIGNAL(initLayerStackDisplay()),this,SLOT(initDisplayLayerStack()));
@@ -221,13 +221,8 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     if(isImage()){
-        if(m_Image->isPath()){
-            m_Image->convertLayerStackToImage(m_LayerStack);
-            if(!m_Image->save()){
-                on_actionSave_As_triggered();
-            }
-        }
-        else{
+        m_Image->convertLayerStackToImage(m_LayerStack);
+        if(!m_Image->save()){
             on_actionSave_As_triggered();
         }
     }
@@ -240,9 +235,8 @@ void MainWindow::on_actionSave_As_triggered()
         /* Prompt */
         QString path = QFileDialog::getSaveFileName(this, "Save Image As...",
                                                 QString(), "3D Image (*.i3c)");
-        m_Image->setPath(path.toStdString().c_str());
         m_Image->convertLayerStackToImage(m_LayerStack);
-        m_Image->save();
+        m_Image->save(path.toStdString().c_str());
     }
 }
 

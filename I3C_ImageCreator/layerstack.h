@@ -24,6 +24,12 @@ using namespace std;
  * ui that allow to edit them.
  * ***************************************************************************/
 
+/******************************
+ * TODO List
+ * -Create history (undo & redo fnc)
+ *
+ * ****************************/
+
 class LayerStack: public QLabel
 {
     Q_OBJECT

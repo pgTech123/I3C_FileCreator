@@ -28,10 +28,11 @@ LayerStack::~LayerStack()
     if(m_frame != NULL){
         delete m_frame;
     }
+    delete m_Painter;
     if(m_LayerArray != NULL){
         delete[] m_LayerArray;
     }
-    delete m_Painter;
+
 }
 
 void LayerStack::resizeEvent(QResizeEvent*)

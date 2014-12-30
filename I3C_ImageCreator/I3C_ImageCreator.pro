@@ -10,7 +10,8 @@ SOURCES += \
     layerstack.cpp \
     layer.cpp \
     paintingwindow.cpp \
-    colorpad.cpp
+    colorpad.cpp \
+    gvbinaryfunctions.cpp
 
 FORMS += \
     mainwindow.ui \
@@ -26,4 +27,6 @@ HEADERS += \
     layerstack.h \
     layer.h \
     paintingwindow.h \
-    colorpad.h
+    colorpad.h \
+    i3cFileStruct.h \
+    gvbinaryfunctions.h
