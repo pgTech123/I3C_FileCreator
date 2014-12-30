@@ -49,6 +49,9 @@ private:
     void writeExtension();
     bool writeI3CFile();
 
+    int countTotalCubes();
+    int countTotalCubesAtLevel(int level);
+
 private:
     /* File Variables */
     string m_strFilePath;
