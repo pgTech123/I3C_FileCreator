@@ -45,12 +45,17 @@ void LayerStack::resizeEvent(QResizeEvent*)
         /* As we draw on this image, we dont want to unzoom too much */
         if(newWidth >= m_iSideSize && newHeight >= m_iSideSize){
             m_PixmapScaled = m_frame->scaled(newWidth, newHeight, Qt::KeepAspectRatio);
-            QLabel::setPixmap(m_PixmapScaled);
 
             /* Adjust scale factor between real size of 1 pixel and the size of 1 pix displayed */
             m_dPixelToPixelFactor = (double)m_iSideSize / (double)m_PixmapScaled.width();
             m_iOffsetCorrection = m_PixmapScaled.width() * 0.125 * m_dPixelToPixelFactor;
         }
+        else{
+            m_PixmapScaled = m_frame->scaled(m_PixmapScaled.width(), m_PixmapScaled.height(), Qt::KeepAspectRatio);
+            m_dPixelToPixelFactor = 1;
+            m_iOffsetCorrection = 0;
+        }
+        QLabel::setPixmap(m_PixmapScaled);
     }
 }
 
