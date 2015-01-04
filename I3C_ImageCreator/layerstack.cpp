@@ -167,6 +167,31 @@ void LayerStack::setWorkspaceAsCurrentLayer()
     resizeEvent(NULL);
 }
 
+bool LayerStack::isAPixelWritten(int x, int y, int z, int w, int h, int d)
+{
+    int maxX = x + w;
+    int maxY = y + h;
+    int maxZ = z + d;
+
+    if(x >= m_iSideSize || y >= m_iSideSize || z >= m_iSideSize ||
+            maxX >= m_iSideSize || maxY >= m_iSideSize || maxZ >= m_iSideSize){
+        return false;
+    }
+
+    unsigned char *transparencyMap;
+
+    for(int posZ = z; posZ < maxZ; maxZ++){
+        transparencyMap = m_LayerArray[posZ].getTransparencyMapPtr();
+        for(int posX = x; posX < maxX; posX++){
+            for(int posY = y; posY < maxY; maxY++){
+                if(transparencyMap[posX + posY*m_iSideSize] != 0){
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 
 void LayerStack::setActiveColor(int red, int green, int blue)
 {

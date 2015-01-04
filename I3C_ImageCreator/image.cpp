@@ -52,7 +52,6 @@ void Image::initializeEmpty()
     if(m_i3cFile.sideSize != 0){
         /* Create Minimum Viable File */
         m_i3cFile.content.map = 0;
-
         m_bNoImageContained = false;
     }
 }
@@ -69,7 +68,13 @@ bool Image::setSideSize(int sideSize)
 
 int Image::convertLayerStackToImage(LayerStack *layerStack)
 {
-    //TODO
+    int convertingLevel = m_i3cFile.numOfLevels;
+    while(convertingLevel > 1){
+        convertReferencesLS2Img(layerStack, convertingLevel);
+        convertingLevel--;
+    }
+    convertPixelsLS2Img(layerStack);
+
     return NO_ERRORS;
 }
 
@@ -103,34 +108,15 @@ void Image::writeExtension()
 bool Image::writeI3CFile()
 {
     if(!m_bNoImageContained){
-        ofstream file;
+        fstream file;
         file.open(m_strFilePath.c_str());
         if(file.is_open()){
-            /* Write Header */
-            file << m_i3cFile.sideSize << endl;
-
-            int totalCubes = countTotalCubes();
-            file << totalCubes << endl;
-
-            int *cubesAtLevel = new int[m_i3cFile.numOfLevels];
-            for(int i = 0; i < m_i3cFile.numOfLevels; i++){
-                cubesAtLevel[i] = countTotalCubesAtLevel(i+1);
-                file << cubesAtLevel[i] << endl;
-            }
+            writeHeader(&file);
 
             /* Write Data */
-            for(int i = 0; i < cubesAtLevel[0]; i++){
-                /* Write Pixel Data */
-                //TODO
-            }
-            for(int level = 1; level < m_i3cFile.numOfLevels; level++){
-                for(int i = 0; i < cubesAtLevel[level]; i++){
-                    /* Write References */
-                    //TODO
-                }
-            }
+            writePixels(&file);
+            writeReferences(&file);
 
-            delete[] cubesAtLevel;
             file.close();
             return true;
         }
@@ -139,14 +125,62 @@ bool Image::writeI3CFile()
     return false;
 }
 
+void Image::convertReferencesLS2Img(LayerStack* layerStack, int level)
+{
+    /* Verify parameters */
+    if(level > m_i3cFile.numOfLevels){
+        return;
+    }
+
+    if(level == m_i3cFile.numOfLevels){
+        /* Create first map */
+        //TODO
+    }
+    else{
+        /* Look previous maps and try to find childs */
+        //TODO
+    }
+}
+
+void Image::convertPixelsLS2Img(LayerStack *layerStack)
+{
+    /* Look previous maps and try to find childs */
+    //TODO
+}
+
 int Image::countTotalCubes()
 {
-    //TODO
-    return 0;
+    int count = 0;
+    for(int i = 1; i <= m_i3cFile.numOfLevels; i++){
+        count += countTotalCubesAtLevel(i);
+    }
+
+    return count;
 }
 
 int Image::countTotalCubesAtLevel(int level)
 {
+    int count = 0;
     //TODO
-    return 0;
+    return count;
+}
+
+void Image::writeHeader(fstream *file)
+{
+    *file << m_i3cFile.sideSize << endl;
+    *file << countTotalCubes() << endl;
+
+    for(int i = 1; i <= m_i3cFile.numOfLevels; i++){
+        *file << countTotalCubesAtLevel(i) << endl;
+    }
+}
+
+void Image::writePixels(fstream *file)
+{
+
+}
+
+void Image::writeReferences(fstream *file)
+{
+
 }

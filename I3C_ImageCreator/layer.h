@@ -24,12 +24,15 @@ public:
 
     void setSideSize(int sideSize);
     QPixmap* getPixmapPtr();
+    unsigned char* getTransparencyMapPtr();
 
+    void setImageEmpty();
     void writePixel(int x, int y, int r, int g, int b);
 
 private:
     int m_iSideSize;
     QPixmap *m_PixmapLayer;
+    unsigned char *m_transparencyMap;
     QPainter *m_Painter;
 };
 

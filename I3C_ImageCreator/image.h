@@ -49,8 +49,14 @@ private:
     void writeExtension();
     bool writeI3CFile();
 
+    void convertReferencesLS2Img(LayerStack *layerStack, int level);
+    void convertPixelsLS2Img(LayerStack *layerStack);
+
     int countTotalCubes();
     int countTotalCubesAtLevel(int level);
+    void writeHeader(fstream* file);
+    void writePixels(fstream* file);
+    void writeReferences(fstream* file);
 
 private:
     /* File Variables */

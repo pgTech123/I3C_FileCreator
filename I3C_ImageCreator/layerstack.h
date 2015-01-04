@@ -53,6 +53,9 @@ public:
     /* Workspace functions */
     void setWorkspaceAsCurrentLayer();
 
+    /* Conversion */
+    bool isAPixelWritten(int x, int y, int z, int w, int h, int d);
+
 private:
     void updateDisplayedLayer(int x, int y, int r, int g, int b);
     void addPixmapInTransparency(QPixmap *layer);
