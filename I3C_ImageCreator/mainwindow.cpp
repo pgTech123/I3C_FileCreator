@@ -236,7 +236,11 @@ void MainWindow::on_actionSave_As_triggered()
         QString path = QFileDialog::getSaveFileName(this, "Save Image As...",
                                                 QString(), "3D Image (*.i3c)");
         m_Image->convertLayerStackToImage(m_LayerStack);
-        m_Image->save(path.toStdString().c_str());
+        if(!m_Image->save(path.toStdString().c_str())){
+            QMessageBox::warning(this, "ERROR",
+                                 tr("An error occured trying to save the image. Make sure the file is not")+
+                                 tr(" open in an other programm and try again."));
+        }
     }
 }
 

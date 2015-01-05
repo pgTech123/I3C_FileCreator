@@ -11,7 +11,8 @@ SOURCES += \
     layer.cpp \
     paintingwindow.cpp \
     colorpad.cpp \
-    gvbinaryfunctions.cpp
+    gvbinaryfunctions.cpp \
+    i3cFileStruct.cpp
 
 FORMS += \
     mainwindow.ui \

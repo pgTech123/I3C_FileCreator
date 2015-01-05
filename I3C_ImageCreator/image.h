@@ -14,9 +14,11 @@
 #include "layerstack.h"
 #include "gvbinaryfunctions.h"
 
-#define NO_ERRORS   0
-#define ERROR_SIZE  1
-#define NO_IMAGE    2
+#define NO_ERRORS               0
+#define ERROR_SIZE              1
+#define NO_IMAGE                2
+#define IMAGE_ALREADY_LOADED    3
+#define UNABLE_TO_OPEN_FILE     4
 
 /*********************************************************************
  * The purpose of this class is to provide the algorithm to convert
@@ -28,7 +30,6 @@ class Image
 {
 public:
     Image();
-    Image(const char* path);
     ~Image();
 
     /* File Functions */
@@ -38,33 +39,30 @@ public:
 
     /* Image Modif */
     bool setSideSize(int sideSize);
-    void initializeEmpty();
 
     /* Conversion */
     int convertLayerStackToImage(LayerStack *layerStack);
     int convertImageToLayerStack(LayerStack **ptrLayerStack);
 
 private:
-    void initialization();
     void writeExtension();
     bool writeI3CFile();
 
     void convertReferencesLS2Img(LayerStack *layerStack, int level);
     void convertPixelsLS2Img(LayerStack *layerStack);
 
-    int countTotalCubes();
-    int countTotalCubesAtLevel(int level);
-    void writeHeader(fstream* file);
-    void writePixels(fstream* file);
-    void writeReferences(fstream* file);
+    void readHeader(ifstream *file);
+    void readPixels(ifstream *file);
+    void readReferences(ifstream *file);
+
+    void writeHeader(ofstream* file);
+    void writePixels(ofstream* file);
+    void writeReferences(ofstream* file);
 
 private:
     /* File Variables */
     string m_strFilePath;
     i3cFile m_i3cFile;
-
-    /* Image Variable */
-    bool m_bNoImageContained;
 };
 
 #endif // IMAGE_H

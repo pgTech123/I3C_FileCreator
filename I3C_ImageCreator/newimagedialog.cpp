@@ -31,7 +31,6 @@ void NewImageDialog::accept()
 
     /* Set Image Properties */
     (*m_ptrImage)->setSideSize(sideSize);
-    (*m_ptrImage)->initializeEmpty();
     if(SavingInfoValid()){
         /* Concat and convert strings */
         QString pathQString = ui->lineEditPath->text() + "/" + ui->lineEditFileName->text() + ".i3c";
