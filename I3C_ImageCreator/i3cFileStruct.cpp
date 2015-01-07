@@ -51,7 +51,14 @@ int i3cFile::getNumOfLevel()
 
 void i3cFile::setMap(int level, int index, unsigned char map)
 {
+    //TO MODIFY
+    m_iptrTotalCubesAtLevel[level-1] = numberHighBits(map);
     //TODO
+}
+
+unsigned char i3cFile::getMap(int level, int index)
+{
+    //todo
 }
 
 int i3cFile::countTotalCubes()

@@ -11,6 +11,7 @@
 #include <QPixmap>
 #include <QPainter>
 
+
 /******************************************************************
  * The purpose of this class is to represent a single layer of the
  * image.

@@ -179,16 +179,16 @@ bool LayerStack::isAPixelWritten(int x, int y, int z, int w, int h, int d)
     int maxZ = z + d;
 
     if(x >= m_iSideSize || y >= m_iSideSize || z >= m_iSideSize ||
-            maxX >= m_iSideSize || maxY >= m_iSideSize || maxZ >= m_iSideSize){
+            maxX > m_iSideSize || maxY > m_iSideSize || maxZ > m_iSideSize){
+        cout << "boundary error layer stack" << endl;
         return false;
     }
 
     unsigned char *transparencyMap;
-
-    for(int posZ = z; posZ < maxZ; maxZ++){
+    for(int posZ = z; posZ < maxZ; posZ++){
         transparencyMap = m_LayerArray[posZ].getTransparencyMapPtr();
         for(int posX = x; posX < maxX; posX++){
-            for(int posY = y; posY < maxY; maxY++){
+            for(int posY = y; posY < maxY; posY++){
                 if(transparencyMap[posX + posY*m_iSideSize] != 0){
                     return true;
                 }

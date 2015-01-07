@@ -117,17 +117,14 @@ bool Image::writeI3CFile()
 void Image::convertReferencesLS2Img(LayerStack* layerStack, int level)
 {
     /* Verify parameters */
-    if(level <= m_i3cFile.getNumOfLevel()){
+    if(level > m_i3cFile.getNumOfLevel()){
         return;
     }
+
     unsigned char map = 0;
+
     if(level == m_i3cFile.getNumOfLevel()){
-        /* Create first map */
-        for(int i = 0; i < 8; i++){
-            if(layerStack->isAPixelWritten(/*TODO*/)){
-                map = (map | (0x0001 << i));
-            }
-        }
+        map = getMapFromLayerStack(layerStack, 0, 0, 0, (m_i3cFile.getSideSize()/2));
         m_i3cFile.setMap(level, 0, map);
     }
     else{
@@ -141,6 +138,36 @@ void Image::convertPixelsLS2Img(LayerStack *layerStack)
 {
     /* Look previous maps and try to find childs */
     //TODO
+}
+
+unsigned char Image::getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize)
+{
+    unsigned char map = 0;
+    if(layerStack->isAPixelWritten(x,y,z,sideSize,sideSize,sideSize)){
+        map = (map | (0x0001));
+    }
+    if(layerStack->isAPixelWritten(x+sideSize,y,z,sideSize,sideSize,sideSize)){
+        map = (map | (0x0002));
+    }
+    if(layerStack->isAPixelWritten(x+sideSize,y+sideSize,z,sideSize,sideSize,sideSize)){
+        map = (map | (0x0004));
+    }
+    if(layerStack->isAPixelWritten(x,y+sideSize,z,sideSize,sideSize,sideSize)){
+        map = (map | (0x0008));
+    }
+    if(layerStack->isAPixelWritten(x,y,z+sideSize,sideSize,sideSize,sideSize)){
+        map = (map | (0x0010));
+    }
+    if(layerStack->isAPixelWritten(x+sideSize,y,z+sideSize,sideSize,sideSize,sideSize)){
+        map = (map | (0x0020));
+    }
+    if(layerStack->isAPixelWritten(x+sideSize,y+sideSize,z+sideSize,sideSize,sideSize,sideSize)){
+        map = (map | (0x0040));
+    }
+    if(layerStack->isAPixelWritten(x,y+sideSize,z+sideSize,sideSize,sideSize,sideSize)){
+        map = (map | (0x0080));
+    }
+    return map;
 }
 
 void Image::readHeader(ifstream *file)

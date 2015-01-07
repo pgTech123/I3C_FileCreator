@@ -34,6 +34,7 @@ public:
     int getNumOfLevel();
 
     void setMap(int level, int index, unsigned char map);
+    unsigned char getMap(int level, int index);
 
     /* Image Statistics */
     int countTotalCubes();
