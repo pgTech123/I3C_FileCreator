@@ -125,7 +125,7 @@ void Image::convertReferencesLS2Img(LayerStack* layerStack, int level)
 
     if(level == m_i3cFile.getNumOfLevel()){
         map = getMapFromLayerStack(layerStack, 0, 0, 0, (m_i3cFile.getSideSize()/2));
-        m_i3cFile.setMap(level, 0, map);
+        m_i3cFile.setMap(level, map);   //Possiblity to capture errors here
     }
     else{
         /* Look previous maps and try to find childs
@@ -136,7 +136,11 @@ void Image::convertReferencesLS2Img(LayerStack* layerStack, int level)
 
 void Image::convertPixelsLS2Img(LayerStack *layerStack)
 {
+    unsigned char map = 0;
+
     /* Look previous maps and try to find childs */
+
+    /* Get pixels */
     //TODO
 }
 
@@ -190,6 +194,7 @@ void Image::writeHeader(ofstream *file)
     *file << m_i3cFile.getSideSize() << endl;
     *file << m_i3cFile.countTotalCubes() << endl;
 
+    /* Write Starting by Pixel Level */
     for(int i = 1; i <= m_i3cFile.getNumOfLevel(); i++){
         *file << m_i3cFile.countTotalCubesAtLevel(i) << endl;
     }
@@ -197,7 +202,15 @@ void Image::writeHeader(ofstream *file)
 
 void Image::writePixels(ofstream *file)
 {
-    //TODO
+    unsigned char map;
+    for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(1); i++){
+        map = m_i3cFile.getMap(1,i);
+        *file << map; //TODO: Verify if no bug: unsigned char ???
+        for(int pix = 0; pix < numberHighBits(map) ; pix++){
+            //TODO: Write Pixels
+            //m_i3cFile.getRed...
+        }
+    }
 }
 
 void Image::writeReferences(ofstream *file)
