@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <math.h>
 #include "i3cFileStruct.h"
 #include "layerstack.h"
 #include "gvbinaryfunctions.h"
@@ -51,7 +52,7 @@ private:
     void convertReferencesLS2Img(LayerStack *layerStack, int level);
     void convertPixelsLS2Img(LayerStack *layerStack);
 
-    unsigned char getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize);
+    MapAndPos getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize);
 
     void readHeader(ifstream *file);
     void readPixels(ifstream *file);

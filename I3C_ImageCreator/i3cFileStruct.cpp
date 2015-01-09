@@ -7,7 +7,7 @@ i3cFile::i3cFile()
     m_iIndexLevel = 0;
     m_iCurrentLevel = 0;
     m_iptrTotalCubesAtLevel = NULL;
-    m_ucMaps = NULL;
+    m_MapsAndPos = NULL;
 }
 
 i3cFile::~i3cFile()
@@ -27,6 +27,11 @@ bool i3cFile::isInitialized()
     return false;
 }
 
+void i3cFile::resetImage()
+{
+    //TODO
+}
+
 bool i3cFile::setSideSize(int sideSize)
 {
     if(isBase2(sideSize) && sideSize > 0 && m_iSideSize == 0){
@@ -36,13 +41,16 @@ bool i3cFile::setSideSize(int sideSize)
 
         /* Allocation */
         m_iptrTotalCubesAtLevel = new int[m_iNumOfLevels];  /*Count variable*/
-        m_ucMaps = new unsigned char* [m_iNumOfLevels];     /*Allocate pointers to map array*/
+        m_MapsAndPos = new MapAndPos* [m_iNumOfLevels];     /*Allocate pointers to map array*/
+        m_bMapLocked = new bool [m_iNumOfLevels];
 
         /* Initialisation */
         for(int i = 0; i < m_iNumOfLevels-1; i++){
             m_iptrTotalCubesAtLevel[i] = 0;
+            m_bMapLocked[i] = true;
         }
         m_iptrTotalCubesAtLevel[m_iNumOfLevels-1] = 1; /* Always 1 */
+        m_bMapLocked[m_iNumOfLevels-1] = false;
 
         /**/
         m_iCurrentLevel = m_iNumOfLevels;
@@ -61,14 +69,14 @@ int i3cFile::getNumOfLevel()
     return m_iNumOfLevels;
 }
 
-int i3cFile::setMap(int level, unsigned char map)
+int i3cFile::setMapAndPos(int level, MapAndPos mapAndPos)
 {
     if(level >= 2 && level <= m_iNumOfLevels && m_iCurrentLevel == level){
         /*Update Count */
-        m_iptrTotalCubesAtLevel[level-2] += numberHighBits(map);    /* Level-- is the index in the array, and we want its child so -2 */
+        m_iptrTotalCubesAtLevel[level-2] += numberHighBits(mapAndPos.map);    /* Level-- is the index in the array, and we want its child so -2 */
 
         /* Set Map */
-        m_ucMaps[level-1][m_iIndexLevel] = map;
+        m_MapsAndPos[level-1][m_iIndexLevel] = mapAndPos;
 
         /* Update Index */
         m_iIndexLevel ++;
@@ -84,9 +92,11 @@ int i3cFile::setMap(int level, unsigned char map)
     return LEVEL_NOT_ACCESSIBLE;
 }
 
-unsigned char i3cFile::getMap(int level, int index)
+MapAndPos i3cFile::getMapAndPos(int level, int index)
 {
-    return m_ucMaps[level-1][index];
+    if(!m_bMapLocked[level-1]){
+        return m_MapsAndPos[level-1][index];
+    }
 }
 
 int i3cFile::setPixel(unsigned char map, unsigned char red[8], unsigned char green[8], unsigned char blue[8])
@@ -94,20 +104,34 @@ int i3cFile::setPixel(unsigned char map, unsigned char red[8], unsigned char gre
 
 }
 
-/*TO UNCOMMENT WHEN ALLOCATED FUNCTION WRITTEN*/
 unsigned char i3cFile::getRed(int index, int posInMap)
 {
-    //return m_ucRed[index][posInMap];
+    if(posInMap >= 8 || m_bMapLocked[0]){
+        return 0;
+    }
+    else{
+        return m_ucRed[index][posInMap];
+    }
 }
 
 unsigned char i3cFile::getGreen(int index, int posInMap)
 {
-    //return m_ucGreen[index][posInMap];
+    if(posInMap >= 8 || m_bMapLocked[0]){
+        return 0;
+    }
+    else{
+        return m_ucGreen[index][posInMap];
+    }
 }
 
 unsigned char i3cFile::getBlue(int index, int posInMap)
 {
-    //return m_ucBlue[index][posInMap];
+    if(posInMap >= 8 || m_bMapLocked[0]){
+        return 0;
+    }
+    else{
+        return m_ucBlue[index][posInMap];
+    }
 }
 
 int i3cFile::countTotalCubes()
@@ -134,5 +158,6 @@ int i3cFile::countTotalCubesAtLevel(int level)
 
 void i3cFile::allocateChilds(int size)
 {
-    m_ucMaps[m_iCurrentLevel-1] = new unsigned char[size];
+    m_MapsAndPos[m_iCurrentLevel-1] = new MapAndPos[size];
+    m_bMapLocked[m_iCurrentLevel-1] = false;
 }

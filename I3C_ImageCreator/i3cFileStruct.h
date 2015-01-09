@@ -11,6 +11,13 @@ using namespace std;
 #define LEVEL_NOT_ACCESSIBLE    2
 #define LEVEL_LOCKED            3
 
+struct MapAndPos{
+    unsigned char map;
+    int x;
+    int y;
+    int z;
+};
+
 class i3cFile{
 public:
     i3cFile();
@@ -18,7 +25,6 @@ public:
 
     /* Image Status */
     bool isInitialized();
-    bool isImageFullyWritten();
 
     /* Write & Rewrite Image */
     void resetImage();
@@ -28,8 +34,8 @@ public:
     int getSideSize();
     int getNumOfLevel();
 
-    int setMap(int level, unsigned char map);
-    unsigned char getMap(int level, int index);
+    int setMapAndPos(int level, MapAndPos mapAndPos);
+    MapAndPos getMapAndPos(int level, int index);
 
     int setPixel(unsigned char map, unsigned char red[8], unsigned char green[8], unsigned char blue[8]);
     unsigned char getRed(int index, int posInMap);
@@ -47,10 +53,13 @@ private:
     /* Image */
     int m_iSideSize;
     int m_iNumOfLevels;
-    unsigned char **m_ucMaps;
+    MapAndPos **m_MapsAndPos;
     unsigned char **m_ucRed;
     unsigned char **m_ucGreen;
     unsigned char **m_ucBlue;
+
+    /* Safety (access) */
+    bool *m_bMapLocked;
 
     /* Statistics */
     int *m_iptrTotalCubesAtLevel;
