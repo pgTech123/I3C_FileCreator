@@ -56,6 +56,7 @@ private:
     void setChildMapViaParentMap(LayerStack *layerStack, int level);
     void setChildMap(LayerStack *layerStack, int x, int y, int z, int level, int sideSize);
     MapAndPos getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize);
+    void setCubePixels(LayerStack *layerStack, int x, int y, int z);
 
     void readHeader(ifstream *file);
     void readPixels(ifstream *file);

@@ -136,12 +136,35 @@ void Image::convertReferencesLS2Img(LayerStack* layerStack, int level)
 
 void Image::convertPixelsLS2Img(LayerStack *layerStack)
 {
-    unsigned char map = 0;
+    MapAndPos parent_sMap;
+    for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(2); i++){
+        parent_sMap = m_i3cFile.getMapAndPos(2, i);
 
-    /* Look previous maps and try to find childs */
-
-    /* Get pixels */
-    //TODO
+        if(parent_sMap.map & 0x01){
+            setCubePixels(layerStack, parent_sMap.x, parent_sMap.y, parent_sMap.z);
+        }
+        if(parent_sMap.map & 0x02){
+            setCubePixels(layerStack, parent_sMap.x + 2, parent_sMap.y, parent_sMap.z);
+        }
+        if(parent_sMap.map & 0x04){
+            setCubePixels(layerStack, parent_sMap.x + 2, parent_sMap.y + 2, parent_sMap.z);
+        }
+        if(parent_sMap.map & 0x08){
+            setCubePixels(layerStack, parent_sMap.x, parent_sMap.y + 2, parent_sMap.z);
+        }
+        if(parent_sMap.map & 0x10){
+            setCubePixels(layerStack, parent_sMap.x, parent_sMap.y, parent_sMap.z + 2);
+        }
+        if(parent_sMap.map & 0x20){
+            setCubePixels(layerStack, parent_sMap.x + 2, parent_sMap.y, parent_sMap.z + 2);
+        }
+        if(parent_sMap.map & 0x40){
+            setCubePixels(layerStack, parent_sMap.x + 2, parent_sMap.y + 2, parent_sMap.z + 2);
+        }
+        if(parent_sMap.map & 0x80){
+            setCubePixels(layerStack, parent_sMap.x, parent_sMap.y + 2, parent_sMap.z + 2);
+        }
+    }
 }
 
 void Image::setChildMapViaParentMap(LayerStack *layerStack, int level)
@@ -221,6 +244,23 @@ MapAndPos Image::getMapFromLayerStack(LayerStack *layerStack, int x, int y, int 
     return mapAndPos;
 }
 
+void Image::setCubePixels(LayerStack *layerStack, int x, int y, int z)
+{
+    Pixel pixels[8];
+    MapAndPos mapAndPos = getMapFromLayerStack(layerStack, x, y, z, 1);
+
+    pixels[0] = layerStack->getPixelAt(x  , y  , z  );
+    pixels[1] = layerStack->getPixelAt(x+1, y  , z  );
+    pixels[2] = layerStack->getPixelAt(x+1, y+1, z  );
+    pixels[3] = layerStack->getPixelAt(x  , y+1, z  );
+    pixels[4] = layerStack->getPixelAt(x  , y  , z+1);
+    pixels[5] = layerStack->getPixelAt(x+1, y  , z+1);
+    pixels[6] = layerStack->getPixelAt(x+1, y+1, z+1);
+    pixels[7] = layerStack->getPixelAt(x  , y+1, z+1);
+
+    m_i3cFile.setPixel(mapAndPos.map, pixels);
+}
+
 void Image::readHeader(ifstream *file)
 {
     //TODO
@@ -239,7 +279,6 @@ void Image::readReferences(ifstream *file)
 void Image::writeHeader(ofstream *file)
 {
     *file << m_i3cFile.getSideSize() << endl;
-    *file << m_i3cFile.countTotalCubes() << endl;
 
     /* Write Starting by Pixel Level */
     for(int i = 1; i <= m_i3cFile.getNumOfLevel(); i++){
@@ -254,7 +293,7 @@ void Image::writePixels(ofstream *file)
         mapPos = m_i3cFile.getMapAndPos(1,i);
         *file << (int)mapPos.map << endl;
         for(int pix = 0; pix < 8 ; pix++){
-            if(mapPos.map & (0x01 << i)){
+            if(mapPos.map & (0x01 << pix)){
                 *file << (int)m_i3cFile.getRed(i, pix) << endl;
                 *file << (int)m_i3cFile.getGreen(i, pix) << endl;
                 *file << (int)m_i3cFile.getBlue(i, pix) << endl;

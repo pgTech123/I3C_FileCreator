@@ -108,7 +108,7 @@ MapAndPos i3cFile::getMapAndPos(int level, int index)
     return mapNull;
 }
 
-int i3cFile::setPixel(unsigned char map, unsigned char red[8], unsigned char green[8], unsigned char blue[8])
+int i3cFile::setPixel(unsigned char map, Pixel pixels[8])
 {
     if(m_iptrTotalCubesAtLevel[0] > m_iIndexLevel){
         /* Allocate Pixels */
@@ -119,9 +119,9 @@ int i3cFile::setPixel(unsigned char map, unsigned char red[8], unsigned char gre
         /* Set Data */
         m_MapsAndPos[0][m_iIndexLevel].map = map;
         for(int i = 0; i < 8; i++){
-            m_ucRed[m_iIndexLevel][i] = red[i];
-            m_ucGreen[m_iIndexLevel][i] = green[i];
-            m_ucBlue[m_iIndexLevel][i] = blue[i];
+            m_ucRed[m_iIndexLevel][i] = pixels[i].red;
+            m_ucGreen[m_iIndexLevel][i] = pixels[i].green;
+            m_ucBlue[m_iIndexLevel][i] = pixels[i].blue;
         }
 
         /* Update Index */
@@ -134,7 +134,7 @@ int i3cFile::setPixel(unsigned char map, unsigned char red[8], unsigned char gre
 
 unsigned char i3cFile::getRed(int index, int posInMap)
 {
-    if(posInMap >= 8 || m_iptrTotalCubesAtLevel[0] >= index || m_ucRed[index] == NULL){
+    if(posInMap >= 8 || m_ucRed[index] == NULL){
         return 0;
     }
     else{
@@ -144,7 +144,7 @@ unsigned char i3cFile::getRed(int index, int posInMap)
 
 unsigned char i3cFile::getGreen(int index, int posInMap)
 {
-    if(posInMap >= 8 || m_iptrTotalCubesAtLevel[0] >= index || m_ucGreen[index] == NULL){
+    if(posInMap >= 8 || m_ucGreen[index] == NULL){
         return 0;
     }
     else{
@@ -154,7 +154,7 @@ unsigned char i3cFile::getGreen(int index, int posInMap)
 
 unsigned char i3cFile::getBlue(int index, int posInMap)
 {
-    if(posInMap >= 8 || m_iptrTotalCubesAtLevel[0] >= index || m_ucBlue[index] == NULL){
+    if(posInMap >= 8 || m_ucBlue[index] == NULL){
         return 0;
     }
     else{
