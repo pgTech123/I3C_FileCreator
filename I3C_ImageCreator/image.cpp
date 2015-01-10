@@ -57,6 +57,7 @@ bool Image::setSideSize(int sideSize)
 
 int Image::convertLayerStackToImage(LayerStack *layerStack)
 {
+    m_i3cFile.resetImage();
     int convertingLevel = m_i3cFile.getNumOfLevel();
     while(convertingLevel > 1){
         convertReferencesLS2Img(layerStack, convertingLevel);
@@ -252,10 +253,12 @@ void Image::writePixels(ofstream *file)
     for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(1); i++){
         mapPos = m_i3cFile.getMapAndPos(1,i);
         *file << (int)mapPos.map << endl;
-        for(int pix = 0; pix < numberHighBits(mapPos.map) ; pix++){
-            *file << (int)m_i3cFile.getRed(i, pix) << endl;
-            *file << (int)m_i3cFile.getGreen(i, pix) << endl;
-            *file << (int)m_i3cFile.getBlue(i, pix) << endl;
+        for(int pix = 0; pix < 8 ; pix++){
+            if(mapPos.map & (0x01 << i)){
+                *file << (int)m_i3cFile.getRed(i, pix) << endl;
+                *file << (int)m_i3cFile.getGreen(i, pix) << endl;
+                *file << (int)m_i3cFile.getBlue(i, pix) << endl;
+            }
         }
     }
 }

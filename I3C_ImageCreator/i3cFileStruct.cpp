@@ -2,21 +2,12 @@
 
 i3cFile::i3cFile()
 {
-    m_iSideSize = 0;
-    m_iNumOfLevels = 0;
-    m_iIndexLevel = 0;
-    m_iCurrentLevel = 0;
-    m_iptrTotalCubesAtLevel = NULL;
-    m_MapsAndPos = NULL;
+    initMembers();
 }
 
 i3cFile::~i3cFile()
 {
-    if(m_iptrTotalCubesAtLevel != NULL){
-        delete[] m_iptrTotalCubesAtLevel;
-    }
-    //DELETE ALL CHILD
-    //TODO
+   deleteImageData();
 }
 
 bool i3cFile::isInitialized()
@@ -29,7 +20,10 @@ bool i3cFile::isInitialized()
 
 void i3cFile::resetImage()
 {
-    //TODO
+    int tmpSideSize = m_iSideSize;
+    deleteImageData();
+    initMembers();
+    setSideSize(tmpSideSize);
 }
 
 bool i3cFile::setSideSize(int sideSize)
@@ -39,22 +33,34 @@ bool i3cFile::setSideSize(int sideSize)
         m_iSideSize = sideSize;
         m_iNumOfLevels = firstHighBit(sideSize);
 
+
         /* Allocation */
         m_iptrTotalCubesAtLevel = new int[m_iNumOfLevels];  /*Count variable*/
         m_MapsAndPos = new MapAndPos* [m_iNumOfLevels];     /*Allocate pointers to map array*/
         m_bMapLocked = new bool [m_iNumOfLevels];
 
+
         /* Initialisation */
         for(int i = 0; i < m_iNumOfLevels-1; i++){
+            /* Image Data */
+            m_MapsAndPos[i] = NULL;
+            /* Statistics */
             m_iptrTotalCubesAtLevel[i] = 0;
+            /* Safety Lock */
             m_bMapLocked[i] = true;
         }
+        /* Image Data */
+        m_MapsAndPos[m_iNumOfLevels-1] = NULL;
+        /* Statistics */
         m_iptrTotalCubesAtLevel[m_iNumOfLevels-1] = 1; /* Always 1 */
+        /* Safety Lock */
         m_bMapLocked[m_iNumOfLevels-1] = false;
+
 
         /* Allocate first cube */
         m_iCurrentLevel = m_iNumOfLevels;
         allocateChilds(1);
+        return true;
     }
     return false;
 }
@@ -97,22 +103,22 @@ MapAndPos i3cFile::getMapAndPos(int level, int index)
     if(!m_bMapLocked[level-1]){
         return m_MapsAndPos[level-1][index];
     }
+    MapAndPos mapNull;
+    mapNull.map = 0;
+    return mapNull;
 }
 
-
-/*Not empty pixels must be put in order first in the arrays. Some cases might be unused. They must be at the end*/
 int i3cFile::setPixel(unsigned char map, unsigned char red[8], unsigned char green[8], unsigned char blue[8])
 {
     if(m_iptrTotalCubesAtLevel[0] > m_iIndexLevel){
         /* Allocate Pixels */
-        int pixNotEmpty = numberHighBits(map);
-        m_ucRed[m_iIndexLevel] = new unsigned char [pixNotEmpty];
-        m_ucGreen[m_iIndexLevel] = new unsigned char [pixNotEmpty];
-        m_ucBlue[m_iIndexLevel] = new unsigned char [pixNotEmpty];
+        m_ucRed[m_iIndexLevel] = new unsigned char [8];
+        m_ucGreen[m_iIndexLevel] = new unsigned char [8];
+        m_ucBlue[m_iIndexLevel] = new unsigned char [8];
 
         /* Set Data */
         m_MapsAndPos[0][m_iIndexLevel].map = map;
-        for(int i = 0; i < pixNotEmpty; i++){
+        for(int i = 0; i < 8; i++){
             m_ucRed[m_iIndexLevel][i] = red[i];
             m_ucGreen[m_iIndexLevel][i] = green[i];
             m_ucBlue[m_iIndexLevel][i] = blue[i];
@@ -128,7 +134,7 @@ int i3cFile::setPixel(unsigned char map, unsigned char red[8], unsigned char gre
 
 unsigned char i3cFile::getRed(int index, int posInMap)
 {
-    if(posInMap >= 8 || m_bMapLocked[0]){
+    if(posInMap >= 8 || m_iptrTotalCubesAtLevel[0] >= index || m_ucRed[index] == NULL){
         return 0;
     }
     else{
@@ -138,7 +144,7 @@ unsigned char i3cFile::getRed(int index, int posInMap)
 
 unsigned char i3cFile::getGreen(int index, int posInMap)
 {
-    if(posInMap >= 8 || m_bMapLocked[0]){
+    if(posInMap >= 8 || m_iptrTotalCubesAtLevel[0] >= index || m_ucGreen[index] == NULL){
         return 0;
     }
     else{
@@ -148,7 +154,7 @@ unsigned char i3cFile::getGreen(int index, int posInMap)
 
 unsigned char i3cFile::getBlue(int index, int posInMap)
 {
-    if(posInMap >= 8 || m_bMapLocked[0]){
+    if(posInMap >= 8 || m_iptrTotalCubesAtLevel[0] >= index || m_ucBlue[index] == NULL){
         return 0;
     }
     else{
@@ -178,6 +184,27 @@ int i3cFile::countTotalCubesAtLevel(int level)
     }
 }
 
+void i3cFile::initMembers()
+{
+    /*Init image data*/
+    m_iSideSize = 0;
+    m_iNumOfLevels = 0;
+    m_MapsAndPos = NULL;
+    m_ucRed = NULL;
+    m_ucGreen = NULL;
+    m_ucBlue = NULL;
+
+    /* Init Safety Lock */
+    m_bMapLocked = NULL;
+
+    /* Init Statistics */
+    m_iptrTotalCubesAtLevel = NULL;
+
+    /* Init cursor */
+    m_iIndexLevel = 0;
+    m_iCurrentLevel = 0;
+}
+
 void i3cFile::allocateChilds(int size)
 {
     m_MapsAndPos[m_iCurrentLevel-1] = new MapAndPos[size];
@@ -188,5 +215,48 @@ void i3cFile::allocateChilds(int size)
         m_ucRed = new unsigned char* [size];
         m_ucGreen = new unsigned char* [size];
         m_ucBlue = new unsigned char* [size];
+        for(int i = 0; i < size; i++){
+            m_ucRed[i] = NULL;
+            m_ucGreen[i] = NULL;
+            m_ucBlue[i] = NULL;
+        }
+    }
+}
+
+void i3cFile::deleteImageData()
+{
+    /* Delete Image Data Arrays(2D) */
+    if(m_MapsAndPos != NULL){
+         for(int i = 0; i < m_iNumOfLevels; i++){
+             if(m_MapsAndPos[i] != NULL){
+                 delete[] m_MapsAndPos[i];
+             }
+         }
+         delete[] m_MapsAndPos;
+     }
+     delete2DUCArray(m_ucRed, 8);
+     delete2DUCArray(m_ucGreen, 8);
+     delete2DUCArray(m_ucBlue, 8);
+
+     /* Delete Safety Lock Array */
+     if(m_bMapLocked != NULL){
+         delete[] m_bMapLocked;
+     }
+
+     /* Delete Statistics Array */
+     if(m_iptrTotalCubesAtLevel != NULL){
+         delete[] m_iptrTotalCubesAtLevel;
+     }
+}
+
+void i3cFile::delete2DUCArray(unsigned char **array, int arraySize2ndD)
+{
+    if(array != NULL){
+        for(int i = 0; i < arraySize2ndD; i++){
+            if(array[i] != NULL){
+                delete[] array[i];
+            }
+        }
+        delete[] array;
     }
 }
