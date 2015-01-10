@@ -52,6 +52,8 @@ private:
     void convertReferencesLS2Img(LayerStack *layerStack, int level);
     void convertPixelsLS2Img(LayerStack *layerStack);
 
+    void setChildMapViaParentMap(LayerStack *layerStack, int level);
+    void setChildMap(LayerStack *layerStack, int x, int y, int z, int level, int sideSize);
     MapAndPos getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize);
 
     void readHeader(ifstream *file);

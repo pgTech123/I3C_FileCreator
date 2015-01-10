@@ -37,6 +37,7 @@ public:
     int setMapAndPos(int level, MapAndPos mapAndPos);
     MapAndPos getMapAndPos(int level, int index);
 
+    /*Not empty pixels must be put in order first in the arrays. Some cases might be unused. They must be at the end*/
     int setPixel(unsigned char map, unsigned char red[8], unsigned char green[8], unsigned char blue[8]);
     unsigned char getRed(int index, int posInMap);
     unsigned char getGreen(int index, int posInMap);

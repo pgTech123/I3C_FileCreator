@@ -52,7 +52,7 @@ bool i3cFile::setSideSize(int sideSize)
         m_iptrTotalCubesAtLevel[m_iNumOfLevels-1] = 1; /* Always 1 */
         m_bMapLocked[m_iNumOfLevels-1] = false;
 
-        /**/
+        /* Allocate first cube */
         m_iCurrentLevel = m_iNumOfLevels;
         allocateChilds(1);
     }
@@ -99,9 +99,31 @@ MapAndPos i3cFile::getMapAndPos(int level, int index)
     }
 }
 
+
+/*Not empty pixels must be put in order first in the arrays. Some cases might be unused. They must be at the end*/
 int i3cFile::setPixel(unsigned char map, unsigned char red[8], unsigned char green[8], unsigned char blue[8])
 {
+    if(m_iptrTotalCubesAtLevel[0] > m_iIndexLevel){
+        /* Allocate Pixels */
+        int pixNotEmpty = numberHighBits(map);
+        m_ucRed[m_iIndexLevel] = new unsigned char [pixNotEmpty];
+        m_ucGreen[m_iIndexLevel] = new unsigned char [pixNotEmpty];
+        m_ucBlue[m_iIndexLevel] = new unsigned char [pixNotEmpty];
 
+        /* Set Data */
+        m_MapsAndPos[0][m_iIndexLevel].map = map;
+        for(int i = 0; i < pixNotEmpty; i++){
+            m_ucRed[m_iIndexLevel][i] = red[i];
+            m_ucGreen[m_iIndexLevel][i] = green[i];
+            m_ucBlue[m_iIndexLevel][i] = blue[i];
+        }
+
+        /* Update Index */
+        m_iIndexLevel ++;
+
+        return NO_ERRORS;
+    }
+    return LEVEL_LOCKED;
 }
 
 unsigned char i3cFile::getRed(int index, int posInMap)
@@ -160,4 +182,11 @@ void i3cFile::allocateChilds(int size)
 {
     m_MapsAndPos[m_iCurrentLevel-1] = new MapAndPos[size];
     m_bMapLocked[m_iCurrentLevel-1] = false;
+
+    if(m_iCurrentLevel == 1){
+        /* Allocate space for pixels */
+        m_ucRed = new unsigned char* [size];
+        m_ucGreen = new unsigned char* [size];
+        m_ucBlue = new unsigned char* [size];
+    }
 }

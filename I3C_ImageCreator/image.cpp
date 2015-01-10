@@ -121,27 +121,15 @@ void Image::convertReferencesLS2Img(LayerStack* layerStack, int level)
         return;
     }
 
-    MapAndPos mapAndPos;
-    mapAndPos.map = 0;
-
     if(level == m_i3cFile.getNumOfLevel()){
+        MapAndPos mapAndPos;
+        mapAndPos.map = 0;
         mapAndPos = getMapFromLayerStack(layerStack, 0, 0, 0, pow(2,level-1));
         m_i3cFile.setMapAndPos(level, mapAndPos);   //Possiblity to capture errors here
     }
     else{
-        /* Look previous maps and try to find childs */
-        MapAndPos parent_sMap;
-
-        //TODO
-        for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(level); i++){
-            parent_sMap = m_i3cFile.getMapAndPos(level+1, i);
-            mapAndPos = getMapFromLayerStack(layerStack,
-                                             parent_sMap.x,
-                                             parent_sMap.y,
-                                             parent_sMap.z,
-                                             pow(2,level-1));
-            m_i3cFile.setMapAndPos(level, mapAndPos);   //Possiblity to capture errors here
-        }
+        /* Cube has a parent and a child */
+        setChildMapViaParentMap(layerStack, level);
     }
 }
 
@@ -155,58 +143,79 @@ void Image::convertPixelsLS2Img(LayerStack *layerStack)
     //TODO
 }
 
+void Image::setChildMapViaParentMap(LayerStack *layerStack, int level)
+{
+    MapAndPos parent_sMap;
+    int sideSize = pow(2, level-1);
+    /* We loop through all parent's maps */
+    for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(level+1); i++){
+        parent_sMap = m_i3cFile.getMapAndPos(level+1, i);
+
+        /* Look at map and associate to position in cube */
+        if(parent_sMap.map & 0x01){
+            setChildMap(layerStack, parent_sMap.x, parent_sMap.y, parent_sMap.z, level, sideSize);
+        }
+        if(parent_sMap.map & 0x02){
+            setChildMap(layerStack, parent_sMap.x+sideSize, parent_sMap.y, parent_sMap.z, level, sideSize);
+        }
+        if(parent_sMap.map & 0x04){
+            setChildMap(layerStack, parent_sMap.x+sideSize, parent_sMap.y+sideSize, parent_sMap.z, level, sideSize);
+        }
+        if(parent_sMap.map & 0x08){
+            setChildMap(layerStack, parent_sMap.x, parent_sMap.y+sideSize, parent_sMap.z, level, sideSize);
+        }
+        if(parent_sMap.map & 0x10){
+            setChildMap(layerStack, parent_sMap.x, parent_sMap.y, parent_sMap.z+sideSize, level, sideSize);
+        }
+        if(parent_sMap.map & 0x20){
+            setChildMap(layerStack, parent_sMap.x+sideSize, parent_sMap.y, parent_sMap.z+sideSize, level, sideSize);
+        }
+        if(parent_sMap.map & 0x40){
+            setChildMap(layerStack, parent_sMap.x+sideSize, parent_sMap.y+sideSize, parent_sMap.z+sideSize, level, sideSize);
+        }
+        if(parent_sMap.map & 0x80){
+            setChildMap(layerStack, parent_sMap.x, parent_sMap.y+sideSize, parent_sMap.z+sideSize, level, sideSize);
+        }
+    }
+}
+
+void Image::setChildMap(LayerStack *layerStack, int x, int y, int z, int level, int sideSize)
+{
+    MapAndPos mapAndPos = getMapFromLayerStack(layerStack, x, y, z, sideSize);
+    m_i3cFile.setMapAndPos(level, mapAndPos);
+}
+
 MapAndPos Image::getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize)
 {
     MapAndPos mapAndPos;
     mapAndPos.map = 0;
+    mapAndPos.x = x;
+    mapAndPos.y = y;
+    mapAndPos.z = z;
 
     if(layerStack->isAPixelWritten(x,y,z,sideSize,sideSize,sideSize)){
         mapAndPos.map = (mapAndPos.map | (0x0001));
-        mapAndPos.x = x;
-        mapAndPos.y = y;
-        mapAndPos.z = z;
     }
     if(layerStack->isAPixelWritten(x+sideSize,y,z,sideSize,sideSize,sideSize)){
         mapAndPos.map = (mapAndPos.map | (0x0002));
-        mapAndPos.x = x+sideSize;
-        mapAndPos.y = y;
-        mapAndPos.z = z;
     }
     if(layerStack->isAPixelWritten(x+sideSize,y+sideSize,z,sideSize,sideSize,sideSize)){
         mapAndPos.map = (mapAndPos.map | (0x0004));
-        mapAndPos.x = x+sideSize;
-        mapAndPos.y = y+sideSize;
-        mapAndPos.z = z;
     }
     if(layerStack->isAPixelWritten(x,y+sideSize,z,sideSize,sideSize,sideSize)){
         mapAndPos.map = (mapAndPos.map | (0x0008));
-        mapAndPos.x = x;
-        mapAndPos.y = y+sideSize;
-        mapAndPos.z = z;
     }
     if(layerStack->isAPixelWritten(x,y,z+sideSize,sideSize,sideSize,sideSize)){
         mapAndPos.map = (mapAndPos.map | (0x0010));
-        mapAndPos.x = x;
-        mapAndPos.y = y;
-        mapAndPos.z = z+sideSize;
     }
     if(layerStack->isAPixelWritten(x+sideSize,y,z+sideSize,sideSize,sideSize,sideSize)){
         mapAndPos.map = (mapAndPos.map | (0x0020));
-        mapAndPos.x = x+sideSize;
-        mapAndPos.y = y;
-        mapAndPos.z = z+sideSize;
     }
     if(layerStack->isAPixelWritten(x+sideSize,y+sideSize,z+sideSize,sideSize,sideSize,sideSize)){
         mapAndPos.map = (mapAndPos.map | (0x0040));
-        mapAndPos.x = x+sideSize;
-        mapAndPos.y = y+sideSize;
-        mapAndPos.z = z+sideSize;
     }
     if(layerStack->isAPixelWritten(x,y+sideSize,z+sideSize,sideSize,sideSize,sideSize)){
         mapAndPos.map = (mapAndPos.map | (0x0080));
-        mapAndPos.x = x;
-        mapAndPos.y = y+sideSize;
-        mapAndPos.z = z+sideSize;
     }
     return mapAndPos;
 }
@@ -242,10 +251,11 @@ void Image::writePixels(ofstream *file)
     MapAndPos mapPos;
     for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(1); i++){
         mapPos = m_i3cFile.getMapAndPos(1,i);
-        *file << mapPos.map; //TODO: Verify if no bug: unsigned char ???
+        *file << (int)mapPos.map << endl;
         for(int pix = 0; pix < numberHighBits(mapPos.map) ; pix++){
-            //TODO: Write Pixels
-            //m_i3cFile.getRed...
+            *file << (int)m_i3cFile.getRed(i, pix) << endl;
+            *file << (int)m_i3cFile.getGreen(i, pix) << endl;
+            *file << (int)m_i3cFile.getBlue(i, pix) << endl;
         }
     }
 }
