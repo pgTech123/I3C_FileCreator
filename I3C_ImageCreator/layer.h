@@ -10,6 +10,10 @@
 
 #include <QPixmap>
 #include <QPainter>
+#include <QImage>
+#include <QColor>
+#include <QRgb>
+#include <pixel.h>
 
 
 /******************************************************************
@@ -26,6 +30,7 @@ public:
     void setSideSize(int sideSize);
     QPixmap* getPixmapPtr();
     unsigned char* getTransparencyMapPtr();
+    Pixel getPixel(int x, int y);
 
     void setImageEmpty();
     void writePixel(int x, int y, int r, int g, int b);

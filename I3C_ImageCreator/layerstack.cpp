@@ -205,6 +205,11 @@ bool LayerStack::isAPixelWritten(int x, int y, int z, int w, int h, int d)
     return false;
 }
 
+Pixel LayerStack::getPixelAt(int x, int y, int z)
+{
+     return m_LayerArray[z].getPixel(x,y);
+}
+
 void LayerStack::setActiveColor(int red, int green, int blue)
 {
     m_iRed = red;

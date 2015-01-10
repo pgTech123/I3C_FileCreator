@@ -14,6 +14,7 @@
 #include "i3cFileStruct.h"
 #include "layerstack.h"
 #include "gvbinaryfunctions.h"
+#include "pixel.h"
 
 #define NO_ERRORS               0
 #define ERROR_SIZE              1

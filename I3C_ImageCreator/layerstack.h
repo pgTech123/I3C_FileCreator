@@ -13,6 +13,7 @@
 #include <QMouseEvent>
 #include <QResizeEvent>
 #include "layer.h"
+#include "pixel.h"
 
 /*DEBUG PURPOSE*/
 #include <iostream>
@@ -55,6 +56,7 @@ public:
 
     /* Conversion */
     bool isAPixelWritten(int x, int y, int z, int w, int h, int d);
+    Pixel getPixelAt(int x, int y, int z);
 
 private:
     void updateDisplayedLayer(int x, int y, int r, int g, int b);

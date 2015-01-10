@@ -30,4 +30,5 @@ HEADERS += \
     paintingwindow.h \
     colorpad.h \
     i3cFileStruct.h \
-    gvbinaryfunctions.h
+    gvbinaryfunctions.h \
+    pixel.h

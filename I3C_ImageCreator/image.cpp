@@ -265,5 +265,11 @@ void Image::writePixels(ofstream *file)
 
 void Image::writeReferences(ofstream *file)
 {
-    //TODO
+    MapAndPos mapPos;
+    for(int level = 1; level <= m_i3cFile.getNumOfLevel(); level++){
+        for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(level); i++){
+            mapPos = m_i3cFile.getMapAndPos(level, i);
+            *file << (int)mapPos.map << endl;
+        }
+    }
 }
