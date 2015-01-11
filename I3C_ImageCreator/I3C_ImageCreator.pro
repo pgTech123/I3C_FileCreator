@@ -31,4 +31,6 @@ HEADERS += \
     colorpad.h \
     i3cFileStruct.h \
     gvbinaryfunctions.h \
-    pixel.h
+    pixel.h \
+    cubemap.h \
+    constants.h
