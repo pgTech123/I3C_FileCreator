@@ -105,6 +105,9 @@ CubeMap i3cFile::getMapAndPos(int level, int index)
     }
     CubeMap mapNull;
     mapNull.map = 0;
+    mapNull.x = 0;
+    mapNull.y = 0;
+    mapNull.z = 0;
     return mapNull;
 }
 
