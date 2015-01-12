@@ -1,22 +1,20 @@
+/*********************************************************
+ * I3CFileStruct.h
+ * Author:      Pascal Gendron
+ * Version:     0.0.1
+ * *******************************************************/
+
 #ifndef I3CFILESTRUCT_H
 #define I3CFILESTRUCT_H
 
 #include <iostream>
 using namespace std;
 
+#include "pixel.h"
+#include "cubemap.h"
 #include "gvbinaryfunctions.h"
+#include "constants.h"
 
-#define NO_ERRORS               0
-#define INDEX_OUT_OF_RANGE      1
-#define LEVEL_NOT_ACCESSIBLE    2
-#define LEVEL_LOCKED            3
-
-struct MapAndPos{
-    unsigned char map;
-    int x;
-    int y;
-    int z;
-};
 
 class i3cFile{
 public:
@@ -34,10 +32,10 @@ public:
     int getSideSize();
     int getNumOfLevel();
 
-    int setMapAndPos(int level, MapAndPos mapAndPos);
-    MapAndPos getMapAndPos(int level, int index);
+    int setMapAndPos(int level, CubeMap mapAndPos);
+    CubeMap getMapAndPos(int level, int index);
 
-    int setPixel(unsigned char map, unsigned char red[8], unsigned char green[8], unsigned char blue[8]);
+    int setPixel(CubeMap map, Pixel pixels[8]);
     unsigned char getRed(int index, int posInMap);
     unsigned char getGreen(int index, int posInMap);
     unsigned char getBlue(int index, int posInMap);
@@ -47,13 +45,16 @@ public:
     int countTotalCubesAtLevel(int level);
 
 private:
+    void initMembers();
     void allocateChilds(int size);
+    void deleteImageData();
+    void delete2DUCArray(unsigned char **array, int arraySize2ndD);
 
 private:
     /* Image */
     int m_iSideSize;
     int m_iNumOfLevels;
-    MapAndPos **m_MapsAndPos;
+    CubeMap **m_MapsAndPos;
     unsigned char **m_ucRed;
     unsigned char **m_ucGreen;
     unsigned char **m_ucBlue;
@@ -63,9 +64,8 @@ private:
 
     /* Statistics */
     int *m_iptrTotalCubesAtLevel;
-    int *m_iptrNumberOfChilds;
 
-    /* Map Settings */
+    /* Cursors */
     int m_iCurrentLevel;
     int m_iIndexLevel;
 };

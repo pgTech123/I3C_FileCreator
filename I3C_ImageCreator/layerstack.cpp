@@ -181,6 +181,13 @@ bool LayerStack::isAPixelWritten(int x, int y, int z, int w, int h, int d)
     if(x >= m_iSideSize || y >= m_iSideSize || z >= m_iSideSize ||
             maxX > m_iSideSize || maxY > m_iSideSize || maxZ > m_iSideSize){
         cout << "boundary error layer stack" << endl;
+        /*cout << "max X" << maxX <<endl;
+        cout << "max Y" << maxY <<endl;
+        cout << "max Z" << maxZ <<endl;
+        cout << "X" << x <<endl;
+        cout << "Y" << y <<endl;
+        cout << "Z" << z <<endl;*/
+
         return false;
     }
 
@@ -196,6 +203,11 @@ bool LayerStack::isAPixelWritten(int x, int y, int z, int w, int h, int d)
         }
     }
     return false;
+}
+
+Pixel LayerStack::getPixelAt(int x, int y, int z)
+{
+     return m_LayerArray[z].getPixel(x,y);
 }
 
 void LayerStack::setActiveColor(int red, int green, int blue)

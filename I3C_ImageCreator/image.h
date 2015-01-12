@@ -14,18 +14,15 @@
 #include "i3cFileStruct.h"
 #include "layerstack.h"
 #include "gvbinaryfunctions.h"
-
-#define NO_ERRORS               0
-#define ERROR_SIZE              1
-#define NO_IMAGE                2
-#define IMAGE_ALREADY_LOADED    3
-#define UNABLE_TO_OPEN_FILE     4
+#include "pixel.h"
+#include "constants.h"
 
 /*********************************************************************
  * The purpose of this class is to provide the algorithm to convert
  * Images to a Layer Stack and the opposite. The class also makes the
  * interactions with the file(open&save).
  * *******************************************************************/
+
 using namespace std;
 class Image
 {
@@ -41,6 +38,9 @@ public:
     /* Image Modif */
     bool setSideSize(int sideSize);
 
+    /* Utils */
+    ChildCorners generateChildCorners(CubeMap map, int mapSize);
+
     /* Conversion */
     int convertLayerStackToImage(LayerStack *layerStack);
     int convertImageToLayerStack(LayerStack **ptrLayerStack);
@@ -49,10 +49,13 @@ private:
     void writeExtension();
     bool writeI3CFile();
 
-    void convertReferencesLS2Img(LayerStack *layerStack, int level);
-    void convertPixelsLS2Img(LayerStack *layerStack);
+    int convertReferencesLS2Img(LayerStack *layerStack, int level);
+    int convertPixelsLS2Img(LayerStack *layerStack);
 
-    MapAndPos getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize);
+    int setChildMapViaParentMap(LayerStack *layerStack, int level);
+    int setChildMap(LayerStack *layerStack, int x, int y, int z, int level, int sideSize);
+    CubeMap getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize);
+    int setCubePixels(LayerStack *layerStack, int x, int y, int z);
 
     void readHeader(ifstream *file);
     void readPixels(ifstream *file);

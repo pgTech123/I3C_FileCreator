@@ -47,6 +47,17 @@ unsigned char* Layer::getTransparencyMapPtr()
     return m_transparencyMap;
 }
 
+Pixel Layer::getPixel(int x, int y)
+{
+    QRgb rgb =  m_PixmapLayer->toImage().pixel(x,y);
+    Pixel pix;
+    pix.red = QColor(rgb).red();
+    pix.green = QColor(rgb).green();
+    pix.blue = QColor(rgb).blue();
+
+    return pix;
+}
+
 void Layer::setImageEmpty()
 {
     int transparencyMapSize = m_iSideSize * m_iSideSize;
