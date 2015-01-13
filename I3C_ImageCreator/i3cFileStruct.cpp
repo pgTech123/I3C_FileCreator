@@ -36,7 +36,7 @@ bool i3cFile::setSideSize(int sideSize)
 
         /* Allocation */
         m_iptrTotalCubesAtLevel = new int[m_iNumOfLevels];  /*Count variable*/
-        m_MapsAndPos = new CubeMap* [m_iNumOfLevels];     /*Allocate pointers to map array*/
+        m_MapsAndPos = new CubeMap* [m_iNumOfLevels];       /*Allocate pointers to map array*/
         m_bMapLocked = new bool [m_iNumOfLevels];
 
 
@@ -103,6 +103,7 @@ CubeMap i3cFile::getMapAndPos(int level, int index)
     if(!m_bMapLocked[level-1]){
         return m_MapsAndPos[level-1][index];
     }
+    cout << "ERROR I3CFile: locked" << endl;
     CubeMap mapNull;
     mapNull.map = 0;
     mapNull.x = 0;

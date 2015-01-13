@@ -56,10 +56,15 @@ bool Image::setSideSize(int sideSize)
 
 ChildCorners Image::generateChildCorners(CubeMap map, int mapSize)
 {
+    /* Preset at 0 as we're not sure they'll be set */
     ChildCorners childCorners;
+    for(int i = 0; i < 8; i++){
+        childCorners.x[i] = 0;
+        childCorners.y[i] = 0;
+        childCorners.z[i] = 0;
+    }
+
     int halfMapSize = mapSize / 2;
-    cout << halfMapSize << endl;
-    cout << "Map Z : " << map.z;//*/
 
     if(map.map & 0x01){
         childCorners.x[0] = map.x;
@@ -209,32 +214,6 @@ int Image::convertPixelsLS2Img(LayerStack *layerStack)
                 }
             }
         }
-
-/*
- *      if(parent_sMap.map & 0x01){
-            setCubePixels(layerStack, parent_sMap.x, parent_sMap.y, parent_sMap.z);
-        }
-        if(parent_sMap.map & 0x02){
-            setCubePixels(layerStack, parent_sMap.x + 2, parent_sMap.y, parent_sMap.z);
-        }
-        if(parent_sMap.map & 0x04){
-            setCubePixels(layerStack, parent_sMap.x + 2, parent_sMap.y + 2, parent_sMap.z);
-        }
-        if(parent_sMap.map & 0x08){
-            setCubePixels(layerStack, parent_sMap.x, parent_sMap.y + 2, parent_sMap.z);
-        }
-        if(parent_sMap.map & 0x10){
-            setCubePixels(layerStack, parent_sMap.x, parent_sMap.y, parent_sMap.z + 2);
-        }
-        if(parent_sMap.map & 0x20){
-            setCubePixels(layerStack, parent_sMap.x + 2, parent_sMap.y, parent_sMap.z + 2);
-        }
-        if(parent_sMap.map & 0x40){
-            setCubePixels(layerStack, parent_sMap.x + 2, parent_sMap.y + 2, parent_sMap.z + 2);
-        }
-        if(parent_sMap.map & 0x80){
-            setCubePixels(layerStack, parent_sMap.x, parent_sMap.y + 2, parent_sMap.z + 2);
-        }*/
     }
     return error;
 }
@@ -264,31 +243,6 @@ int Image::setChildMapViaParentMap(LayerStack *layerStack, int level)
                 }
             }
         }
-        /* Look at map and associate to position in cube */
-        /*if(parent_sMap.map & 0x01){
-            setChildMap(layerStack, parent_sMap.x, parent_sMap.y, parent_sMap.z, level, sideSize);
-        }
-        if(parent_sMap.map & 0x02){
-            setChildMap(layerStack, parent_sMap.x+sideSize, parent_sMap.y, parent_sMap.z, level, sideSize);
-        }
-        if(parent_sMap.map & 0x04){
-            setChildMap(layerStack, parent_sMap.x+sideSize, parent_sMap.y+sideSize, parent_sMap.z, level, sideSize);
-        }
-        if(parent_sMap.map & 0x08){
-            setChildMap(layerStack, parent_sMap.x, parent_sMap.y+sideSize, parent_sMap.z, level, sideSize);
-        }
-        if(parent_sMap.map & 0x10){
-            setChildMap(layerStack, parent_sMap.x, parent_sMap.y, parent_sMap.z+sideSize, level, sideSize);
-        }
-        if(parent_sMap.map & 0x20){
-            setChildMap(layerStack, parent_sMap.x+sideSize, parent_sMap.y, parent_sMap.z+sideSize, level, sideSize);
-        }
-        if(parent_sMap.map & 0x40){
-            setChildMap(layerStack, parent_sMap.x+sideSize, parent_sMap.y+sideSize, parent_sMap.z+sideSize, level, sideSize);
-        }
-        if(parent_sMap.map & 0x80){
-            setChildMap(layerStack, parent_sMap.x, parent_sMap.y+sideSize, parent_sMap.z+sideSize, level, sideSize);
-        }*/
     }
     return error;
 }
@@ -323,30 +277,6 @@ CubeMap Image::getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z,
         }
     }
 
-    /*if(layerStack->isAPixelWritten(x,y,z,halfSideSize,halfSideSize,halfSideSize)){
-        map.map = (map.map | (0x0001));
-    }
-    if(layerStack->isAPixelWritten(x+halfSideSize,y,z,halfSideSize,halfSideSize,halfSideSize)){
-        map.map = (map.map | (0x0002));
-    }
-    if(layerStack->isAPixelWritten(x+halfSideSize,y+halfSideSize,z,halfSideSize,halfSideSize,halfSideSize)){
-        map.map = (map.map | (0x0004));
-    }
-    if(layerStack->isAPixelWritten(x,y+halfSideSize,z,halfSideSize,halfSideSize,halfSideSize)){
-        map.map = (map.map | (0x0008));
-    }
-    if(layerStack->isAPixelWritten(x,y,z+halfSideSize,halfSideSize,halfSideSize,halfSideSize)){
-        map.map = (map.map | (0x0010));
-    }
-    if(layerStack->isAPixelWritten(x+halfSideSize,y,z+halfSideSize,halfSideSize,halfSideSize,halfSideSize)){
-        map.map = (map.map | (0x0020));
-    }
-    if(layerStack->isAPixelWritten(x+halfSideSize,y+halfSideSize,z+halfSideSize,halfSideSize,halfSideSize,halfSideSize)){
-        map.map = (map.map | (0x0040));
-    }
-    if(layerStack->isAPixelWritten(x,y+halfSideSize,z+halfSideSize,halfSideSize,halfSideSize,halfSideSize)){
-        map.map = (map.map | (0x0080));
-    }*/
     return map;
 }
 
@@ -354,22 +284,17 @@ int Image::setCubePixels(LayerStack *layerStack, int x, int y, int z)
 {
     Pixel pixels[8];
     CubeMap map = getMapFromLayerStack(layerStack, x, y, z, 2);
-    ChildCorners childCorners = generateChildCorners(map, 2);
+    cout  << "Map Z: " << (int) map.z << endl;
+    ChildCorners childCorners = generateChildCorners(map, 4);
 
-    /*for(int i = 0; i < 8; i++){
+    for(int i = 0; i < 8; i++){
+        cout << "Corners Pixels: " << childCorners.x[i]
+                << " Y : " << childCorners.y[i]
+                << " z: " << childCorners.z[i] << endl;
         pixels[i] = layerStack->getPixelAt(childCorners.x[i],
                                            childCorners.y[i],
                                            childCorners.z[i]);
-    }//*/
-
-    pixels[0] = layerStack->getPixelAt(x  , y  , z  );
-    pixels[1] = layerStack->getPixelAt(x+1, y  , z  );
-    pixels[2] = layerStack->getPixelAt(x+1, y+1, z  );
-    pixels[3] = layerStack->getPixelAt(x  , y+1, z  );
-    pixels[4] = layerStack->getPixelAt(x  , y  , z+1);
-    pixels[5] = layerStack->getPixelAt(x+1, y  , z+1);
-    pixels[6] = layerStack->getPixelAt(x+1, y+1, z+1);
-    pixels[7] = layerStack->getPixelAt(x  , y+1, z+1);//*/
+    }
 
     return m_i3cFile.setPixel(map, pixels);
 }
