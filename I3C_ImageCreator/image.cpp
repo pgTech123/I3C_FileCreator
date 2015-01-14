@@ -228,14 +228,14 @@ int Image::setChildMapViaParentMap(LayerStack *layerStack, int level)
     /* We loop through all parent's maps */
     for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(level+1); i++){
         parent_sMap = m_i3cFile.getMapAndPos(level+1, i);
-        childCorners = generateChildCorners(parent_sMap, sideSize);
+        childCorners = generateChildCorners(parent_sMap, 2*sideSize);
 
         for(int count = 0; count < 8; count ++){
             if(parent_sMap.map & (0x01 << count)){
                 error = setChildMap(layerStack,
-                                    childCorners.x[i],
-                                    childCorners.y[i],
-                                    childCorners.z[i],
+                                    childCorners.x[count],
+                                    childCorners.y[count],
+                                    childCorners.z[count],
                                     level,
                                     sideSize);
                 if(error != NO_ERRORS){
@@ -284,13 +284,9 @@ int Image::setCubePixels(LayerStack *layerStack, int x, int y, int z)
 {
     Pixel pixels[8];
     CubeMap map = getMapFromLayerStack(layerStack, x, y, z, 2);
-    cout  << "Map Z: " << (int) map.z << endl;
-    ChildCorners childCorners = generateChildCorners(map, 4);
+    ChildCorners childCorners = generateChildCorners(map, 2);
 
     for(int i = 0; i < 8; i++){
-        cout << "Corners Pixels: " << childCorners.x[i]
-                << " Y : " << childCorners.y[i]
-                << " z: " << childCorners.z[i] << endl;
         pixels[i] = layerStack->getPixelAt(childCorners.x[i],
                                            childCorners.y[i],
                                            childCorners.z[i]);

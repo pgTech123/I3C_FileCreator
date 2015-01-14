@@ -23,6 +23,8 @@
  * interactions with the file(open&save).
  * *******************************************************************/
 
+//TODO: Make sure of position of map
+
 using namespace std;
 class Image
 {
