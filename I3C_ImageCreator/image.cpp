@@ -267,7 +267,7 @@ CubeMap Image::getMapFromLayerStack(PixmapLayerStack *layerStack, int x, int y, 
     map.map = 0;
 
     for(int i = 0 ; i < 8; i++){
-        if(layerStack->isAPixelWritten(childCorners.x[i],
+        if(layerStack->pixelWritten(childCorners.x[i],
                                        childCorners.y[i],
                                        childCorners.z[i],
                                        halfSideSize,

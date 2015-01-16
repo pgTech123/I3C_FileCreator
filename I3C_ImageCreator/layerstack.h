@@ -27,6 +27,7 @@ public:
     ~LayerStack();
 
     /* Cube Properties */
+    bool isSideSizeSet();
     int setSideSize(int sideSize);
     int getSideSize();
 
@@ -39,6 +40,7 @@ public:
     /* Access Data */
     bool pixelWritten(int x, int y, int z, int w, int h, int d);
     Pixel getPixelAt(int x, int y, int z);
+    Layer getLayer(int index);
 
 protected:
     /* Workspace functions */

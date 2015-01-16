@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QResizeEvent>
+#include "layerstack.h"
 #include "layer.h"
 #include "pixel.h"
 
@@ -25,7 +26,7 @@ using namespace std;
  *
  * ****************************/
 
-class PixmapLayerStack: public QLabel
+class PixmapLayerStack: public LayerStack , public QLabel
 {
 public:
     Q_OBJECT
@@ -39,21 +40,11 @@ public:
     void mouseReleaseEvent(QMouseEvent*);
     void mouseMoveEvent(QMouseEvent *event);
 
-    /* Image size functions */
-    void setSideSize(int sideSize);
-    int getSideSize();
-
-    /* Layer Functions */
-    int getCurrentLayer();
-
     /* Workspace functions */
     void setWorkspaceAsCurrentLayer();
 
-    /* Conversion */
-    bool isAPixelWritten(int x, int y, int z, int w, int h, int d);
-    Pixel getPixelAt(int x, int y, int z);
-
 private:
+    void layerStackCreated(int sideSize);
     void updateDisplayedLayer(int x, int y, int r, int g, int b);
     void addPixmapInTransparency(QPixmap *layer);
 
@@ -72,16 +63,12 @@ private:
     bool m_bMouseButtonDwn;
 
     /* Status */
-    bool m_bSideSizeSet;
-    int m_iSideSize;
     double m_dPixelToPixelFactor;
 
     /* Layers */
-    int m_iCurrentLayer;
     QPixmap *m_frame;
     QPixmap m_PixmapScaled;
     QPainter *m_Painter;
-    Layer *m_LayerArray;
     int m_iOffsetCorrection;
 
     /* Drawing */

@@ -3,8 +3,6 @@
  * Author:      Pascal Gendron
  * Version:     0.1.0
  * *******************************************************/
-
-
 #include "layerstack.h"
 
 LayerStack::LayerStack()
@@ -24,6 +22,11 @@ LayerStack::~LayerStack()
 }
 
 /* Cube Properties */
+bool LayerStack::isSideSizeSet()
+{
+    return m_bSideSizeSet;
+}
+
 int LayerStack::setSideSize(int sideSize)
 {
     if(!m_bSideSizeSet)
@@ -134,6 +137,15 @@ Pixel LayerStack::getPixelAt(int x, int y, int z)
         return m_LayerArray[z].getPixel(x,y);
     }
     return emptyPixel();
+}
+
+Layer LayerStack::getLayer(int index)
+{
+    if(m_bSideSizeSet){
+        if(index >= 0 && index< m_iSideSize){
+            return m_LayerArray[index];
+        }
+    }
 }
 
 Pixel LayerStack::emptyPixel()
