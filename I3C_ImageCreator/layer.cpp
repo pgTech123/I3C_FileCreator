@@ -34,6 +34,9 @@ void Layer::setSideSize(int sideSize)
     m_transparencyMap = new unsigned char[m_iSideSize*m_iSideSize];
     setImageEmpty();
     m_PixmapLayer->fill(Qt::black);
+    if(m_Painter != NULL){
+        delete m_Painter;
+    }
     m_Painter = new QPainter();
 }
 

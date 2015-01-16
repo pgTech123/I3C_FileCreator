@@ -39,7 +39,7 @@ void NewImageDialog::accept()
     }
 
     /* Create Layer Stack */
-    *m_ptrLayerStack = new LayerStack();
+    *m_ptrLayerStack = new PixmapLayerStack();
     emit connectLayerStack();
     (*m_ptrLayerStack)->setSideSize(sideSize);
 
@@ -63,7 +63,7 @@ void NewImageDialog::setPtrToImage(Image **imgPtr)
     m_ptrImage = imgPtr;
 }
 
-void NewImageDialog::setPtrToLayerStack(LayerStack** layerStackPtr)
+void NewImageDialog::setPtrToLayerStack(PixmapLayerStack** layerStackPtr)
 {
     m_ptrLayerStack = layerStackPtr;
 }

@@ -1,99 +1,61 @@
 /*********************************************************
  * LayerStack.h
  * Author:      Pascal Gendron
- * Version:     0.0.1
+ * Version:     0.1.0
  * *******************************************************/
 
 #ifndef LAYERSTACK_H
 #define LAYERSTACK_H
 
-#include "QLabel"
-#include <QPixmap>
-#include <QPainter>
-#include <QMouseEvent>
-#include <QResizeEvent>
+#include "gvbinaryfunctions.h"
 #include "layer.h"
 #include "pixel.h"
 
-/*DEBUG PURPOSE*/
-#include <iostream>
-using namespace std;
-/*END DEBUG*/
+#define NO_ERRORS               0
+#define SIDE_SIZE_ALREADY_SET   100
+#define SIDE_SIZE_NOT_BASE_2    101
 
-/*****************************************************************************
- * The purpose of this class is to contain a stack of layer and to provide the
- * ui that allow to edit them.
- * ***************************************************************************/
+/********************************************************************************
+ * The purpose of this class is to represent a layer stack, where a layer is a
+ * 2D Image.
+ * ******************************************************************************/
 
-/******************************
- * TODO List
- * -Create history (undo & redo fnc)
- *
- * ****************************/
-
-class LayerStack: public QLabel
+class LayerStack
 {
-    Q_OBJECT
 public:
-    explicit LayerStack(QWidget *parent =  0);
-    virtual ~LayerStack();
+    LayerStack();
+    ~LayerStack();
 
-    /* Events */
-    void resizeEvent(QResizeEvent*);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent*);
-    void mouseMoveEvent(QMouseEvent *event);
-
-    /* Image size functions */
-    void setSideSize(int sideSize);
+    /* Cube Properties */
+    int setSideSize(int sideSize);
     int getSideSize();
 
-    /* Layer Functions */
-    int getCurrentLayer();
-
-    /* Workspace functions */
-    void setWorkspaceAsCurrentLayer();
-
-    /* Conversion */
-    bool isAPixelWritten(int x, int y, int z, int w, int h, int d);
-    Pixel getPixelAt(int x, int y, int z);
-
-private:
-    void updateDisplayedLayer(int x, int y, int r, int g, int b);
-    void addPixmapInTransparency(QPixmap *layer);
-
-public slots:
+    /* Navigation */
     void nextLayer();
     void previousLayer();
     void goToLayer(int layer);
+    int getCurrentLayer();
 
-    void setActiveColor(int red, int green, int blue);
+    /* Access Data */
+    bool pixelWritten(int x, int y, int z, int w, int h, int d);
+    Pixel getPixelAt(int x, int y, int z);
 
-signals:
-    void initLayerStackDisplay();
+protected:
+    /* Workspace functions */
+    virtual void setWorkspaceAsCurrentLayer() {};
 
 private:
-    /* Event */
-    bool m_bMouseButtonDwn;
+    /*Empty method to be overiden if necessary*/
+    virtual void layerStackCreated(int sideSize) {};
 
-    /* Status */
+    Pixel emptyPixel();
+
+private:
+    Layer *m_LayerArray;
+    int m_iCurrentLayer;
+
     bool m_bSideSizeSet;
     int m_iSideSize;
-    double m_dPixelToPixelFactor;
-
-    /* Layers */
-    int m_iCurrentLayer;
-    QPixmap *m_frame;
-    QPixmap m_PixmapScaled;
-    QPainter *m_Painter;
-    Layer *m_LayerArray;
-    int m_iOffsetCorrection;
-
-    /* Drawing */
-    int m_iRed;
-    int m_iGreen;
-    int m_iBlue;
-
 };
 
 #endif // LAYERSTACK_H

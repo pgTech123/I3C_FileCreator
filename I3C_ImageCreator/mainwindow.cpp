@@ -190,7 +190,7 @@ void MainWindow::on_actionNew_triggered()
         m_NewImageDialogWindow->setPtrToImage(&m_Image);
         m_NewImageDialogWindow->setPtrToLayerStack(&m_LayerStack);
         connect(m_NewImageDialogWindow, SIGNAL(connectLayerStack()), this,SLOT(connectLayerStack()));
-        m_NewImageDialogWindow->show();
+        m_NewImageDialogWindow->show();     /*NewDialog kills himself automatically*/
     }
 }
 
@@ -200,12 +200,11 @@ void MainWindow::on_actionOpen_triggered()
     {
         QString path = QFileDialog::getOpenFileName(this, "Load an Image",
                                                   QString(), "3D Image(*.i3c)");
-
         m_Image = new Image();
 
         if(m_Image->open(path.toStdString().c_str()) == NO_ERRORS){
             /* Load image in the layerStack */
-            m_LayerStack = new LayerStack(this);
+            m_LayerStack = new PixmapLayerStack(this);
             connect(m_LayerStack,SIGNAL(initLayerStackDisplay()),this,SLOT(initDisplayLayerStack()));
             m_Image->convertImageToLayerStack(&m_LayerStack);
         }

@@ -1,7 +1,7 @@
 /*********************************************************
  * MainWindow.h
  * Author: Pascal Gendron
- * Version:     0.0.1
+ * Version:     0.1.0
  * *******************************************************/
 
 #ifndef MAINWINDOW_H
@@ -13,7 +13,7 @@
 #include <QFileDialog>
 #include <QString>
 #include "newimagedialog.h"
-#include "layerstack.h"
+#include "pixmaplayerstack.h"
 #include "image.h"
 #include "paintingwindow.h"
 #include "aboutus.h"
@@ -43,7 +43,6 @@ public:
 
     /* Events */
     void closeEvent(QCloseEvent* event);
-
 
 private:
     /* Initialisation */
@@ -103,7 +102,7 @@ private:
 
     /* Data Variables */
     Image *m_Image;
-    LayerStack *m_LayerStack;
+    PixmapLayerStack *m_LayerStack;
 
     /* Subwindow */
     NewImageDialog *m_NewImageDialogWindow;

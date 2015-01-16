@@ -12,7 +12,9 @@ SOURCES += \
     paintingwindow.cpp \
     colorpad.cpp \
     gvbinaryfunctions.cpp \
-    i3cFileStruct.cpp
+    i3cFileStruct.cpp \
+    pixmaplayerstack.cpp \
+    pixmaplayer.cpp
 
 FORMS += \
     mainwindow.ui \
@@ -33,4 +35,6 @@ HEADERS += \
     gvbinaryfunctions.h \
     pixel.h \
     cubemap.h \
-    constants.h
+    constants.h \
+    pixmaplayerstack.h \
+    pixmaplayer.h

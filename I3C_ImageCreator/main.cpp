@@ -12,9 +12,9 @@
  * File format: The program is design to read and write .I3C
  *              files. The description of the structure of such
  *              file will is written in the I3C_File_Structure
- *              file at https://github.com/pgTech123/GV3DFile.git
+ *              file at https://github.com/pgTech123/I3C_ImageVisualizer.git
  *
- * Version:     0.0.1
+ * Version:     0.1.0
  *
  * ***********************************************************/
 

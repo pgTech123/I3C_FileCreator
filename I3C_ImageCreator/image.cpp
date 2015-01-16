@@ -109,7 +109,7 @@ ChildCorners Image::generateChildCorners(CubeMap map, int mapSize)
     return childCorners;
 }
 
-int Image::convertLayerStackToImage(LayerStack *layerStack)
+int Image::convertLayerStackToImage(PixmapLayerStack *layerStack)
 {
     /* Make sure to clean everything that was done previously in  i3cFile */
     m_i3cFile.resetImage();
@@ -131,7 +131,7 @@ int Image::convertLayerStackToImage(LayerStack *layerStack)
     return error;
 }
 
-int Image::convertImageToLayerStack(LayerStack **ptrLayerStack)
+int Image::convertImageToLayerStack(PixmapLayerStack **ptrLayerStack)
 {
     if(m_i3cFile.isInitialized()){
         (*ptrLayerStack)->setSideSize(m_i3cFile.getSideSize());
@@ -177,7 +177,7 @@ bool Image::writeI3CFile()
     return false;
 }
 
-int Image::convertReferencesLS2Img(LayerStack* layerStack, int level)
+int Image::convertReferencesLS2Img(PixmapLayerStack* layerStack, int level)
 {
     /* Verify parameters */
     if(level > m_i3cFile.getNumOfLevel()){
@@ -194,7 +194,7 @@ int Image::convertReferencesLS2Img(LayerStack* layerStack, int level)
     }
 }
 
-int Image::convertPixelsLS2Img(LayerStack *layerStack)
+int Image::convertPixelsLS2Img(PixmapLayerStack *layerStack)
 {
     int error;
     CubeMap parent_sMap;
@@ -218,7 +218,7 @@ int Image::convertPixelsLS2Img(LayerStack *layerStack)
     return error;
 }
 
-int Image::setChildMapViaParentMap(LayerStack *layerStack, int level)
+int Image::setChildMapViaParentMap(PixmapLayerStack *layerStack, int level)
 {
     CubeMap parent_sMap;
     ChildCorners childCorners;
@@ -247,13 +247,13 @@ int Image::setChildMapViaParentMap(LayerStack *layerStack, int level)
     return error;
 }
 
-int Image::setChildMap(LayerStack *layerStack, int x, int y, int z, int level, int sideSize)
+int Image::setChildMap(PixmapLayerStack *layerStack, int x, int y, int z, int level, int sideSize)
 {
     CubeMap mapAndPos = getMapFromLayerStack(layerStack, x, y, z, sideSize);
     return m_i3cFile.setMapAndPos(level, mapAndPos);
 }
 
-CubeMap Image::getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize)
+CubeMap Image::getMapFromLayerStack(PixmapLayerStack *layerStack, int x, int y, int z, int sideSize)
 {
     CubeMap map;
     map.map = 0xFF;
@@ -280,7 +280,7 @@ CubeMap Image::getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z,
     return map;
 }
 
-int Image::setCubePixels(LayerStack *layerStack, int x, int y, int z)
+int Image::setCubePixels(PixmapLayerStack *layerStack, int x, int y, int z)
 {
     Pixel pixels[8];
     CubeMap map = getMapFromLayerStack(layerStack, x, y, z, 2);
