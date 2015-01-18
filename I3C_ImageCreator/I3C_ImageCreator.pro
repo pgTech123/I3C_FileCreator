@@ -14,13 +14,18 @@ SOURCES += \
     gvbinaryfunctions.cpp \
     i3cFileStruct.cpp \
     pixmaplayerstack.cpp \
-    pixmaplayer.cpp
+    pixmaplayer.cpp \
+    layerstackui.cpp \
+    editingwidget.cpp \
+    history.cpp \
+    historyelement.cpp
 
 FORMS += \
     mainwindow.ui \
     aboutus.ui \
     newimagedialog.ui \
-    paintingwindow.ui
+    paintingwindow.ui \
+    editingwidget.ui
 
 HEADERS += \
     mainwindow.h \
@@ -37,4 +42,8 @@ HEADERS += \
     cubemap.h \
     constants.h \
     pixmaplayerstack.h \
-    pixmaplayer.h
+    pixmaplayer.h \
+    layerstackui.h \
+    editingwidget.h \
+    history.h \
+    historyelement.h

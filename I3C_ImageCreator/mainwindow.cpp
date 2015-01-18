@@ -1,7 +1,7 @@
 /*********************************************************
  * MainWindow.cpp
  * Author: Pascal Gendron
- * Version:     0.0.1
+ * Version:     0.1.0
  * *******************************************************/
 
 #include "mainwindow.h"
@@ -11,17 +11,50 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    /* Prepare UI */
     ui->setupUi(this);
     ui->centralwidget->setLayout(ui->gridLayout);
-    initMainWindow();
+
+    /* Instanciate Permanent Widgets */
+    m_EditingWidget = new EditingWidget();
+    m_PaintingWidget = new PaintingWindow();
+    m_AboutUsWindow = new AboutUs();
+
+    /* Set Widget in UI */
+    ui->gridLayout->addWidget(m_EditingWidget, 0, 0);
+    this->addDockWidget(Qt::RightDockWidgetArea, m_PaintingWidget);
+
+    /* Connect Close Call to View Menu */
+    connect(m_PaintingWidget, SIGNAL(hidden()), this,SLOT(paintingWindowClosed()));
+
+    /* Other Connections */
+    connect(m_PaintingWidget, SIGNAL(selectedColor(int,int,int)), m_EditingWidget, SLOT(selectedColor(int,int,int)));
+
+    /* Init Project Status */
+    m_bAllChangesSaved = true;
+    ui->actionUndo->setDisabled(true);
+    ui->actionRedo->setDisabled(true);
+
+    /* History */
+    m_History = new History(HISTORY_LENGHT);
+    m_EditingWidget->setHistoryReference(m_History);
+    //Insert all other element that needs to be connected to history here
+
+    connect(m_History, SIGNAL(newElementInHistory()), this, SLOT(modificationUnsaved()));
+    connect(m_History, SIGNAL(enableUndoButton(bool)), this, SLOT(enableUndo(bool)));
+    connect(m_History, SIGNAL(enableRedoButton(bool)), this, SLOT(enableRedo(bool)));
+    connect(this, SIGNAL(undoSignal()), m_History, SLOT(undo()));
+    connect(this, SIGNAL(redoSignal()), m_History, SLOT(redo()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete m_EditingWidget;
+    delete m_PaintingWidget;
+    delete m_AboutUsWindow;
 
-    deleteM_Image();
-    deleteM_LayerStack();
+    delete m_History;
 }
 
 /* Events */
@@ -31,120 +64,16 @@ void MainWindow::closeEvent(QCloseEvent* event)
         qApp->exit();
     }
     else{
-        /* Ask if we want to save changes */
-        int answer = QMessageBox::warning(this, "Modification not saved",
-                             tr("The document has been modified.\n"
-                             "Do you want to save changes?"),
-                             QMessageBox::Save | QMessageBox::No
-                             | QMessageBox::Cancel,
-                             QMessageBox::Save);
-
-        /* Catch answer and do the action associated to it */
-        if(answer == QMessageBox::Save){
-            on_actionSave_triggered();
-            /* We verify if it worked */
-            if(m_bAllChangesSaved){
-                qApp->exit();
-            }
-            else{
-                event->ignore();
-            }
-        }
-        else if(answer == QMessageBox::No){
+        if(doYouWantToSaveChanges() == GO_ON){
             qApp->exit();
         }
         else{
-           event->ignore();
+            event->ignore();
         }
     }
 }
 
-/* Private Functions */
-void MainWindow::initMainWindow()
-{
-    m_bAllChangesSaved = true;
 
-    /* Disable Undo&Redo as long as no changes are made */
-    ui->actionUndo->setDisabled(true);
-    ui->actionRedo->setDisabled(true);
-
-    m_Image = NULL;
-    m_LayerStack = NULL;
-
-    /* Dock Painting Window */
-    this->addDockWidget(Qt::RightDockWidgetArea, &m_PaintingWindow);
-    connect(&m_PaintingWindow, SIGNAL(hidden()), this,SLOT(paintingWindowClosed()));
-}
-
-bool MainWindow::isImage()
-{
-    if(m_Image == NULL){
-        /* Error: No Images */
-        QMessageBox::warning(this, "Action Impossible",
-                             tr("No images is currently loaded."));
-        return false;
-    }
-    return true;
-}
-
-bool MainWindow::tryToClearImage()
-{
-    /* Ask if we want to discard changes */
-    /* Here, we consider that if there is an image, there is a layerStack */
-    if(m_Image != NULL){
-        if(!m_bAllChangesSaved){
-            /* Ask if we want to save changes */
-            int answer = QMessageBox::warning(this, "Modification not saved",
-                                 tr("The document has been modified.\n"
-                                 "Do you want to save changes?"),
-                                 QMessageBox::Save | QMessageBox::No
-                                 | QMessageBox::Cancel,
-                                 QMessageBox::Save);
-
-            /* Catch answer and do the action associated to it */
-            if(answer == QMessageBox::Save){
-                on_actionSave_triggered();
-                /* We verify if it worked */
-                if(!m_bAllChangesSaved){
-                    return false;
-                }
-            }
-            else{
-               return false;
-            }
-        }
-        /* Delete it */
-        deleteM_Image();
-        deleteM_LayerStack();
-    }
-    return true;
-}
-
-void MainWindow::deleteM_Image()
-{
-    if(m_Image != NULL){
-        delete m_Image;
-        m_Image = NULL;
-    }
-}
-
-void MainWindow::deleteM_LayerStack()
-{
-    if(m_LayerStack != NULL){
-        disconnect(m_LayerStack,SIGNAL(initLayerStackDisplay()),this,SLOT(initDisplayLayerStack()));
-        disconnect(ui->horizontalSliderLayer,SIGNAL(valueChanged(int)), this, SLOT(setCurrentLayer(int)));
-        disconnect(&m_PaintingWindow,SIGNAL(selectedColor(int,int,int)), m_LayerStack, SLOT(setActiveColor(int,int,int)));
-
-        delete m_LayerStack;
-        m_LayerStack = NULL;
-
-        ui->pushButtonPrevious->setEnabled(false);
-        ui->pushButtonNext->setEnabled(false);
-        ui->horizontalSliderLayer->setEnabled(false);
-    }
-}
-
-/* Public Slots */
 void MainWindow::enableUndo(bool enabled)
 {
     ui->actionUndo->setEnabled(enabled);
@@ -155,74 +84,76 @@ void MainWindow::enableRedo(bool enabled)
     ui->actionRedo->setEnabled(enabled);
 }
 
-void MainWindow::changeRequested()
+void MainWindow::modificationUnsaved()
 {
     m_bAllChangesSaved = false;
 }
 
-void MainWindow::initDisplayLayerStack()
+SavingStatus MainWindow::doYouWantToSaveChanges()
 {
-    if(m_LayerStack != NULL){
-        /* Show */
-        ui->gridLayout->addWidget(m_LayerStack,1,1);
+    /* Ask if we want to save changes */
+    int answer = QMessageBox::warning(this, "Modification not saved",
+                         tr("The document has been modified.\n"
+                         "Do you want to save changes?"),
+                         QMessageBox::Save | QMessageBox::No
+                         | QMessageBox::Cancel,
+                         QMessageBox::Save);
 
-        /* Enable Control Buttons */
-        ui->pushButtonPrevious->setEnabled(true);
-        ui->pushButtonNext->setEnabled(true);
-        ui->horizontalSliderLayer->setEnabled(true);
-
-        /* Connect */
-        ui->horizontalSliderLayer->setMaximum(m_LayerStack->getSideSize()-1);
-        connect(ui->horizontalSliderLayer,SIGNAL(valueChanged(int)), m_LayerStack, SLOT(goToLayer(int)));
-        connect(ui->horizontalSliderLayer,SIGNAL(valueChanged(int)), this, SLOT(setCurrentLayer(int)));
-        connect(&m_PaintingWindow,SIGNAL(selectedColor(int,int,int)), m_LayerStack, SLOT(setActiveColor(int,int,int)));
+    /* Catch answer and do the action associated to it */
+    if(answer == QMessageBox::Save){
+        on_actionSave_triggered();
+        /* We verify if it worked */
+        if(m_bAllChangesSaved){
+            return GO_ON;
+        }
+        else{
+            return ABORT;
+        }
     }
+    else if(answer == QMessageBox::No){
+        return GO_ON;
+    }
+    else{
+       return ABORT;
+    }
+
 }
 
-
-/* Private Slots */
 /* Menu File */
 void MainWindow::on_actionNew_triggered()
 {
-    if(tryToClearImage()){
-        /* Create a new Image */
-        m_NewImageDialogWindow = new NewImageDialog(this);
-        m_NewImageDialogWindow->setPtrToImage(&m_Image);
-        m_NewImageDialogWindow->setPtrToLayerStack(&m_LayerStack);
-        connect(m_NewImageDialogWindow, SIGNAL(connectLayerStack()), this,SLOT(connectLayerStack()));
-        m_NewImageDialogWindow->show();     /*NewDialog kills himself automatically*/
+    if(!m_bAllChangesSaved){
+        if(doYouWantToSaveChanges() == ABORT){
+            return;
+        }
     }
+    m_NewImageDialogWindow = new NewImageDialog(this);
+    m_NewImageDialogWindow->setEditingWidgetReference(m_EditingWidget);
+    m_NewImageDialogWindow->show();     /*NewImageDialog kills himself automatically*/
 }
+
 
 void MainWindow::on_actionOpen_triggered()
 {
-    if(tryToClearImage())
-    {
-        QString path = QFileDialog::getOpenFileName(this, "Load an Image",
-                                                  QString(), "3D Image(*.i3c)");
-        m_Image = new Image();
-
-        if(m_Image->open(path.toStdString().c_str()) == NO_ERRORS){
-            /* Load image in the layerStack */
-            m_LayerStack = new PixmapLayerStack(this);
-            connect(m_LayerStack,SIGNAL(initLayerStackDisplay()),this,SLOT(initDisplayLayerStack()));
-            m_Image->convertImageToLayerStack(&m_LayerStack);
+    if(!m_bAllChangesSaved){
+        if(doYouWantToSaveChanges() == ABORT){
+            return;
         }
-        else{
-            /* Display Error */
-            QMessageBox::warning(this, "ERROR",
-                                 tr("An error orrured while trying to open an this image..."));
-            deleteM_Image();
-        }
+    }
+    QString path = QFileDialog::getOpenFileName(this, "Load an Image", QString(), "3D Image(*.i3c)");
+    if(!m_EditingWidget->openImage(path)){
+        QMessageBox::warning(this, "ERROR", "An error orrured while trying to open an this image...");
     }
 }
 
 void MainWindow::on_actionSave_triggered()
 {
-    if(isImage()){
-        m_Image->convertLayerStackToImage(m_LayerStack);
-        if(!m_Image->save()){
+    if(m_EditingWidget->isImage()){
+        if(!m_EditingWidget->save()){
             on_actionSave_As_triggered();
+        }
+        else{
+            m_bAllChangesSaved = true;
         }
     }
 }
@@ -230,22 +161,22 @@ void MainWindow::on_actionSave_triggered()
 void MainWindow::on_actionSave_As_triggered()
 {
     /* Ask where to save and under what name */
-    if(isImage()){
-        /* Prompt */
+    if(m_EditingWidget->isImage()){
         QString path = QFileDialog::getSaveFileName(this, "Save Image As...",
                                                 QString(), "3D Image (*.i3c)");
-        m_Image->convertLayerStackToImage(m_LayerStack);
-        if(!m_Image->save(path.toStdString().c_str())){
+        if(!m_EditingWidget->save(path)){
             QMessageBox::warning(this, "ERROR",
                                  tr("An error occured trying to save the image. Make sure the file is not")+
                                  tr(" open in an other programm and try again."));
+        }
+        else{
+            m_bAllChangesSaved = true;
         }
     }
 }
 
 void MainWindow::on_actionQuit_triggered()
 {
-    /* Call close to allow prompt "Do you wanna save changes" */
     this->close();
 }
 
@@ -266,51 +197,19 @@ void MainWindow::on_actionRedo_triggered()
 void MainWindow::on_actionPainting_Window_triggered()
 {
     if(!ui->actionPainting_Window->isChecked()){
-        m_PaintingWindow.hide();
+        m_PaintingWidget->hide();
     }
     else{
-        m_PaintingWindow.show();
+        m_PaintingWidget->show();
     }
 }
 
 /* Menu Help */
 void MainWindow::on_actionAbout_Us_triggered()
 {
-    m_AboutUsWindow.show();
+    m_AboutUsWindow->show();
 }
 
-/* Buttons */
-void MainWindow::on_pushButtonPrevious_clicked()
-{
-    if(m_LayerStack != NULL){
-        m_LayerStack->previousLayer();
-        ui->horizontalSliderLayer->setValue(m_LayerStack->getCurrentLayer());
-        ui->labelLayerValue->setText(QString::number(m_LayerStack->getCurrentLayer()));
-    }
-}
-
-void MainWindow::on_pushButtonNext_clicked()
-{
-    if(m_LayerStack != NULL){
-        m_LayerStack->nextLayer();
-        ui->horizontalSliderLayer->setValue(m_LayerStack->getCurrentLayer());
-        ui->labelLayerValue->setText(QString::number(m_LayerStack->getCurrentLayer()));
-    }
-}
-
-
-void MainWindow::setCurrentLayer(int currentLayer)
-{
-    ui->labelLayerValue->setText(QString::number(currentLayer));
-}
-
-/* Other Slots */
-void MainWindow::connectLayerStack()
-{
-    if(m_LayerStack != NULL){
-        connect(m_LayerStack,SIGNAL(initLayerStackDisplay()),this,SLOT(initDisplayLayerStack()));
-    }
-}
 
 void MainWindow::paintingWindowClosed()
 {

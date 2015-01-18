@@ -9,9 +9,10 @@
 
 Layer::Layer()
 {
+    cout << "Layer Created" << endl;
     m_PixmapLayer = NULL;
     m_transparencyMap = NULL;
-    m_Painter = NULL;
+    m_Painter = new QPainter();
 }
 
 Layer::~Layer()
@@ -22,22 +23,17 @@ Layer::~Layer()
     if(m_transparencyMap != NULL){
         delete[] m_transparencyMap;
     }
-    if(m_Painter != NULL){
-        delete m_Painter;
-    }
+    delete m_Painter;
 }
 
 void Layer::setSideSize(int sideSize)
 {
+    cout << "Layer Created with side size" << endl;
     m_iSideSize = sideSize;
     m_PixmapLayer = new QPixmap(m_iSideSize, m_iSideSize);
     m_transparencyMap = new unsigned char[m_iSideSize*m_iSideSize];
     setImageEmpty();
     m_PixmapLayer->fill(Qt::black);
-    if(m_Painter != NULL){
-        delete m_Painter;
-    }
-    m_Painter = new QPainter();
 }
 
 QPixmap* Layer::getPixmapPtr()
@@ -72,9 +68,10 @@ void Layer::setImageEmpty()
 
 void Layer::writePixel(int x, int y, int r, int g, int b)
 {
-    m_Painter->begin(m_PixmapLayer);
+    cout<< "Write Pixel called" << endl;
+    /*m_Painter->begin(m_PixmapLayer);
     m_Painter->setPen(QPen(QBrush(QColor(r, g, b)),1));
     m_Painter->drawPoint(x,y);
     m_transparencyMap[x + m_iSideSize * y] = 255;
-    m_Painter->end();
+    m_Painter->end();*/
 }

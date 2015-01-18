@@ -1,7 +1,7 @@
 /*********************************************************
  * NewImageDialog.h
  * Author:      Pascal Gendron
- * Version:     0.0.1
+ * Version:     0.1.0
  * *******************************************************/
 
 #ifndef NEWIMAGEDIALOG_H
@@ -11,8 +11,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QString>
-#include "image.h"
-#include "pixmaplayerstack.h"
+
+#include "editingwidget.h"
 
 /************************************************************************
  * The purpose of this class is to create the UI to facilitate the creation
@@ -39,12 +39,7 @@ public:
     void reject();
     void closeEvent(QCloseEvent* event);
 
-    /* Public functions */
-    void setPtrToImage(Image** imgPtr);
-    void setPtrToLayerStack(PixmapLayerStack** layerStackPtr);
-
-signals:
-    void connectLayerStack();
+    void setEditingWidgetReference(EditingWidget *editingWidget);
 
 private:
     bool SavingInfoValid();
@@ -54,10 +49,7 @@ private slots:
 
 private:
     Ui::NewImageDialog *ui;
-    QWidget *m_parent;
-
-    Image **m_ptrImage;
-    PixmapLayerStack **m_ptrLayerStack;
+    EditingWidget *m_EditingWidget;
 };
 
 #endif // NEWIMAGEDIALOG_H

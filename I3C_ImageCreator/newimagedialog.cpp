@@ -1,7 +1,7 @@
 /*********************************************************
  * NewImageDialog.cpp
  * Author:      Pascal Gendron
- * Version:     0.0.1
+ * Version:     0.1.0
  * *******************************************************/
 
 #include "newimagedialog.h"
@@ -12,7 +12,6 @@ NewImageDialog::NewImageDialog(QWidget *parent) :
     ui(new Ui::NewImageDialog)
 {
     ui->setupUi(this);
-    m_parent = parent;
 }
 
 NewImageDialog::~NewImageDialog()
@@ -25,23 +24,12 @@ void NewImageDialog::accept()
 {
     /* Convert Values */
     int sideSize = ui->comboBoxSize->currentText().toInt();
+    m_EditingWidget->newImage(sideSize);
 
-    /* Create Image */
-    *m_ptrImage = new Image();
-
-    /* Set Image Properties */
-    (*m_ptrImage)->setSideSize(sideSize);
     if(SavingInfoValid()){
-        /* Concat and convert strings */
         QString pathQString = ui->lineEditPath->text() + "/" + ui->lineEditFileName->text() + ".i3c";
-        const char* path  = pathQString.toStdString().c_str();
-        (*m_ptrImage)->save(path);
+        m_EditingWidget->setSavingPath(pathQString);
     }
-
-    /* Create Layer Stack */
-    *m_ptrLayerStack = new PixmapLayerStack();
-    emit connectLayerStack();
-    (*m_ptrLayerStack)->setSideSize(sideSize);
 
     /* Close the window */
     this->close();
@@ -57,15 +45,9 @@ void NewImageDialog::closeEvent(QCloseEvent*)
     delete this;
 }
 
-/* Public Functions */
-void NewImageDialog::setPtrToImage(Image **imgPtr)
+void NewImageDialog::setEditingWidgetReference(EditingWidget *editingWidget)
 {
-    m_ptrImage = imgPtr;
-}
-
-void NewImageDialog::setPtrToLayerStack(PixmapLayerStack** layerStackPtr)
-{
-    m_ptrLayerStack = layerStackPtr;
+    m_EditingWidget = editingWidget;
 }
 
 bool NewImageDialog::SavingInfoValid()

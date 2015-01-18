@@ -15,6 +15,11 @@
 #include <QRgb>
 #include <pixel.h>
 
+/*DEBUG PURPOSE*/
+#include <iostream>
+using namespace std;
+/*END DEBUG*/
+
 
 /******************************************************************
  * The purpose of this class is to represent a single layer of the
