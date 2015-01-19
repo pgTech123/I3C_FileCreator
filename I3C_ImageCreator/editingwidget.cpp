@@ -47,7 +47,11 @@ void EditingWidget::setHistoryReference(History *history)
 void EditingWidget::newImage(int sideSize)
 {
     instanciateImageAndLS();
-    //TODO
+
+    m_Image->setSideSize(sideSize);
+    m_PixmapLayerStack->setSideSize(sideSize);
+
+    initDisplayLayerStack();
 }
 
 bool EditingWidget::isImage()
@@ -81,44 +85,55 @@ bool EditingWidget::save()
 
 void EditingWidget::selectedColor(int r, int g, int b)
 {
-    //TODO
+    if(m_PixmapLayerStack != NULL){
+        m_PixmapLayerStack->getUIQLabel()->setActiveColor(r, g, b);
+    }
 }
 
 
 void EditingWidget::on_pushButtonPrevious_clicked()
 {
-//    if(m_LayerStack != NULL){
-//        m_LayerStack->previousLayer();
-//        ui->horizontalSliderLayer->setValue(m_LayerStack->getCurrentLayer());
-//        ui->labelLayerValue->setText(QString::number(m_LayerStack->getCurrentLayer()));
-//    }
+    if(m_PixmapLayerStack != NULL){
+        m_PixmapLayerStack->previousLayer();
+        ui->horizontalSliderLayer->setValue(m_PixmapLayerStack->getCurrentLayer());
+        ui->labelLayerValue->setText(QString::number(m_PixmapLayerStack->getCurrentLayer()));
+    }
 }
 
 void EditingWidget::on_pushButtonNext_clicked()
 {
-//    if(m_LayerStack != NULL){
-//        m_LayerStack->nextLayer();
-//        ui->horizontalSliderLayer->setValue(m_LayerStack->getCurrentLayer());
-//        ui->labelLayerValue->setText(QString::number(m_LayerStack->getCurrentLayer()));
-//    }
+    if(m_PixmapLayerStack != NULL){
+        m_PixmapLayerStack->nextLayer();
+        ui->horizontalSliderLayer->setValue(m_PixmapLayerStack->getCurrentLayer());
+        ui->labelLayerValue->setText(QString::number(m_PixmapLayerStack->getCurrentLayer()));
+    }
 }
 
 void EditingWidget::on_horizontalSliderLayer_valueChanged(int value)
 {
-//    if(m_LayerStack != NULL){
-//        m_LayerStack->goToLayer(value);
-//    }
+    if(m_PixmapLayerStack != NULL){
+        m_PixmapLayerStack->goToLayer(value);
+    }
 }
 
-//void MainWindow::setCurrentLayer(int currentLayer)
-//{
-//    ui->labelLayerValue->setText(QString::number(currentLayer));
-//}
+void EditingWidget::setCurrentLayer(int currentLayer)
+{
+    ui->labelLayerValue->setText(QString::number(currentLayer));
+}
 
+void EditingWidget::initDisplayLayerStack()
+{
+    if(m_PixmapLayerStack != NULL){
+        /* Show */
+        ui->gridLayout->addWidget(m_PixmapLayerStack->getUIQLabel(),1,1);
 
-//void MainWindow::connectLayerStack()
-//{
-//    if(m_LayerStack != NULL){
-//        connect(m_LayerStack->getUIQLabel(),SIGNAL(initLayerStackDisplay()),this,SLOT(initDisplayLayerStack()));
-//    }
-//}
+        /* Enable Control Buttons */
+        ui->pushButtonPrevious->setEnabled(true);
+        ui->pushButtonNext->setEnabled(true);
+        ui->horizontalSliderLayer->setEnabled(true);
+
+        /* Connect */
+        ui->horizontalSliderLayer->setMaximum(m_PixmapLayerStack->getSideSize()-1);
+        connect(ui->horizontalSliderLayer,SIGNAL(valueChanged(int)), this, SLOT(setCurrentLayer(int)));
+    }
+}

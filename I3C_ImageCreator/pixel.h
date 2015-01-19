@@ -2,9 +2,9 @@
 #define PIXEL_H
 
 struct Pixel{
-    int red;
-    int green;
-    int blue;
+    unsigned char red;
+    unsigned char green;
+    unsigned char blue;
 };
 
 #endif // PIXEL_H

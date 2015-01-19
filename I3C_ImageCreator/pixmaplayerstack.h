@@ -16,7 +16,7 @@
 class PixmapLayerStack: public LayerStack
 {
 public:
-    explicit PixmapLayerStack(QWidget *parent =  0);
+    PixmapLayerStack(QWidget *parent =  0);
     virtual ~PixmapLayerStack();
 
     layerStackUI* getUIQLabel();

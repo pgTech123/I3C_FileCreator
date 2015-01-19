@@ -8,11 +8,6 @@
 #ifndef LAYER_H
 #define LAYER_H
 
-#include <QPixmap>
-#include <QPainter>
-#include <QImage>
-#include <QColor>
-#include <QRgb>
 #include <pixel.h>
 
 /*DEBUG PURPOSE*/
@@ -33,18 +28,19 @@ public:
     ~Layer();
 
     void setSideSize(int sideSize);
-    QPixmap* getPixmapPtr();
+    int getSideSize();
+
     unsigned char* getTransparencyMapPtr();
     Pixel getPixel(int x, int y);
+    Pixel getPixel(int index);
 
     void setImageEmpty();
     void writePixel(int x, int y, int r, int g, int b);
 
 private:
     int m_iSideSize;
-    QPixmap *m_PixmapLayer;
+    Pixel *m_PixelMap;
     unsigned char *m_transparencyMap;
-    QPainter *m_Painter;
 };
 
 #endif // LAYER_H

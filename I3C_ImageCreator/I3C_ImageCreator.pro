@@ -14,7 +14,6 @@ SOURCES += \
     gvbinaryfunctions.cpp \
     i3cFileStruct.cpp \
     pixmaplayerstack.cpp \
-    pixmaplayer.cpp \
     layerstackui.cpp \
     editingwidget.cpp \
     history.cpp \
@@ -42,7 +41,6 @@ HEADERS += \
     cubemap.h \
     constants.h \
     pixmaplayerstack.h \
-    pixmaplayer.h \
     layerstackui.h \
     editingwidget.h \
     history.h \

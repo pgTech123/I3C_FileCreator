@@ -34,6 +34,8 @@ private:
     void updateDisplayedLayer(int x, int y, int r, int g, int b);
     void addPixmapInTransparency(QPixmap *layer);
 
+    void putLayerInPixmap(Layer *layer, QPixmap *pixmap);
+
 signals:
     void initLayerStackDisplay();
 

@@ -49,9 +49,9 @@ void layerStackUI::resizeEvent(QResizeEvent*)
 void layerStackUI::mousePressEvent(QMouseEvent *event)
 {
     m_bMouseButtonDwn = true;
-
+    //TODO: Condition is in drawable widget
     /* Draw on Layer*/
-    m_LayerStack->getLayer(m_LayerStack->getCurrentLayer()).writePixel(event->x()*m_dPixelToPixelFactor,
+    m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(event->x()*m_dPixelToPixelFactor,
                                              event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
                                              m_iRed,
                                              m_iGreen,
@@ -71,8 +71,9 @@ void layerStackUI::mouseReleaseEvent(QMouseEvent*)
 void layerStackUI::mouseMoveEvent(QMouseEvent *event)
 {
     if(m_bMouseButtonDwn){
+        //TODO: Condition is in drawable widget
         /* Draw on Layer */
-        m_LayerStack->getLayer(m_LayerStack->getCurrentLayer()).writePixel(event->x()*m_dPixelToPixelFactor,
+        m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(event->x()*m_dPixelToPixelFactor,
                                                  event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
                                                  m_iRed,
                                                  m_iGreen,
@@ -97,16 +98,19 @@ void layerStackUI::layerStackCreated(int sideSize)
 
 void layerStackUI::currentLayerChanged()
 {
-    *(m_frame) = *(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer()).getPixmapPtr());
+     putLayerInPixmap(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer()), m_frame);
 
+     QPixmap *tmp = new QPixmap(m_LayerStack->getSideSize(), m_LayerStack->getSideSize());
      /* If not last layer, add in transparency */
      if(m_LayerStack->getCurrentLayer() < (m_LayerStack->getSideSize()-1)){
-         addPixmapInTransparency(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer() + 1).getPixmapPtr());
+         putLayerInPixmap(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer() + 1), tmp);
+         addPixmapInTransparency(tmp);
      }
 
      /* If not first layer, add in transparency */
      if(m_LayerStack->getCurrentLayer() > 0){
-         addPixmapInTransparency(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer() - 1).getPixmapPtr());
+         putLayerInPixmap(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer() - 1), tmp);
+         addPixmapInTransparency(tmp);
      }
 
      /* Resize and display */
@@ -138,3 +142,22 @@ void layerStackUI::addPixmapInTransparency(QPixmap *layer)
     m_Painter->drawPixmap(0,0, *layer);
     m_Painter->end();
 }
+
+ void layerStackUI::putLayerInPixmap(Layer *layer, QPixmap *pixmap)
+ {
+     int sideSize = layer->getSideSize();
+     Pixel bufPixel;
+
+     m_Painter->begin(pixmap);
+
+     for(int x = 0; x < sideSize; x++){
+         for(int y = 0; y < sideSize; y++){
+             bufPixel = layer->getPixel(x, y);
+             m_Painter->setPen(QPen(QBrush(QColor(bufPixel.red,
+                                                  bufPixel.green,
+                                                  bufPixel.blue)),1));
+             m_Painter->drawPoint(x,y);
+         }
+     }
+     m_Painter->end();
+ }

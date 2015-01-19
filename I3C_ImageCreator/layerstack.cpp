@@ -139,11 +139,11 @@ Pixel LayerStack::getPixelAt(int x, int y, int z)
     return emptyPixel();
 }
 
-Layer LayerStack::getLayer(int index)
+Layer* LayerStack::getLayer(int index)
 {
     if(m_bSideSizeSet){
         if(index >= 0 && index< m_iSideSize){
-            return m_LayerArray[index];
+            return &m_LayerArray[index];
         }
     }
 }

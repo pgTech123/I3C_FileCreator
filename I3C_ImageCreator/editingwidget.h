@@ -38,11 +38,15 @@ public slots:
     void selectedColor(int r, int g, int b);
 
 private slots:
+    void setCurrentLayer(int currentLayer);
+
     /*TODO : history callback*/
 
 private:
     void instanciateImageAndLS();
     void deleteImageAndLS();
+
+    void initDisplayLayerStack();
 
 private:
     Ui::EditingWidget *ui;
