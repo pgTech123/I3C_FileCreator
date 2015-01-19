@@ -12,7 +12,7 @@
 #include <string>
 #include <math.h>
 #include "i3cFileStruct.h"
-#include "pixmaplayerstack.h"
+#include "layerstack.h"
 #include "gvbinaryfunctions.h"
 #include "pixel.h"
 #include "constants.h"
@@ -44,20 +44,20 @@ public:
     ChildCorners generateChildCorners(CubeMap map, int mapSize);
 
     /* Conversion */
-    int convertLayerStackToImage(PixmapLayerStack *layerStack);
-    int convertImageToLayerStack(PixmapLayerStack **ptrLayerStack);
+    int convertLayerStackToImage(LayerStack *layerStack);
+    int convertImageToLayerStack(LayerStack **ptrLayerStack);
 
 private:
     void writeExtension();
     bool writeI3CFile();
 
-    int convertReferencesLS2Img(PixmapLayerStack *layerStack, int level);
-    int convertPixelsLS2Img(PixmapLayerStack *layerStack);
+    int convertReferencesLS2Img(LayerStack *layerStack, int level);
+    int convertPixelsLS2Img(LayerStack *layerStack);
 
-    int setChildMapViaParentMap(PixmapLayerStack *layerStack, int level);
-    int setChildMap(PixmapLayerStack *layerStack, int x, int y, int z, int level, int sideSize);
-    CubeMap getMapFromLayerStack(PixmapLayerStack *layerStack, int x, int y, int z, int sideSize);
-    int setCubePixels(PixmapLayerStack *layerStack, int x, int y, int z);
+    int setChildMapViaParentMap(LayerStack *layerStack, int level);
+    int setChildMap(LayerStack *layerStack, int x, int y, int z, int level, int sideSize);
+    CubeMap getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize);
+    int setCubePixels(LayerStack *layerStack, int x, int y, int z);
 
     void readHeader(ifstream *file);
     void readPixels(ifstream *file);

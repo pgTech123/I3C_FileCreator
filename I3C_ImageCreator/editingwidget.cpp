@@ -51,35 +51,44 @@ void EditingWidget::newImage(int sideSize)
     m_Image->setSideSize(sideSize);
     m_PixmapLayerStack->setSideSize(sideSize);
 
+
     initDisplayLayerStack();
 }
 
 bool EditingWidget::isImage()
 {
-    if(m_Image != NULL){
-        //TODO
+    if(m_Image != NULL || m_PixmapLayerStack != NULL){
+        return true;
     }
+    return false;
 }
 
 bool EditingWidget::openImage(QString path)
 {
     instanciateImageAndLS();
-    //TODO
+    m_Image->open(path.toStdString().c_str());
+    m_Image->convertImageToLayerStack((LayerStack**)&m_PixmapLayerStack);
+    m_QStringPath = path;
 }
 
 void EditingWidget::setSavingPath(QString path)
 {
-    //TODO
+    m_QStringPath = path;
 }
 
 bool EditingWidget::save(QString path)
 {
-    //TODO
+    m_QStringPath = path;
+    return save();
 }
 
 bool EditingWidget::save()
 {
-    //TODO
+    if(m_QStringPath.isEmpty()){
+        return false;
+    }
+    m_Image->convertLayerStackToImage((LayerStack*) m_PixmapLayerStack);
+    return m_Image->save(m_QStringPath.toStdString().c_str());
 }
 
 

@@ -51,6 +51,8 @@ private:
 private:
     Ui::EditingWidget *ui;
 
+    QString m_QStringPath;
+
     /* Internal memory management */
     Image *m_Image;
     PixmapLayerStack *m_PixmapLayerStack;
