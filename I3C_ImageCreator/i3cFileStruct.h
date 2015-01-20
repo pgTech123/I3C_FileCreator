@@ -26,6 +26,7 @@ public:
 
     /* Write & Rewrite Image */
     void resetImage();
+    void deleteImageData();
 
     /* Accessors */
     bool setSideSize(int sideSize); //Can only be called once
@@ -43,11 +44,11 @@ public:
     /* Image Statistics */
     int countTotalCubes();
     int countTotalCubesAtLevel(int level);
+    void setTotalCubesAtLevel(int level, int numberOfCubes);
 
 private:
     void initMembers();
     void allocateChilds(int size);
-    void deleteImageData();
     void delete2DUCArray(unsigned char **array, int arraySize2ndD);
 
 private:

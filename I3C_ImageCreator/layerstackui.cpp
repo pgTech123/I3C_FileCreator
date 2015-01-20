@@ -100,18 +100,17 @@ void layerStackUI::currentLayerChanged()
 {
      putLayerInPixmap(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer()), m_frame);
 
+     /* Add adjacent layers in transparency */
      QPixmap *tmp = new QPixmap(m_LayerStack->getSideSize(), m_LayerStack->getSideSize());
-     /* If not last layer, add in transparency */
      if(m_LayerStack->getCurrentLayer() < (m_LayerStack->getSideSize()-1)){
          putLayerInPixmap(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer() + 1), tmp);
          addPixmapInTransparency(tmp);
      }
-
-     /* If not first layer, add in transparency */
      if(m_LayerStack->getCurrentLayer() > 0){
          putLayerInPixmap(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer() - 1), tmp);
          addPixmapInTransparency(tmp);
      }
+     delete tmp;
 
      /* Resize and display */
      resizeEvent(NULL);

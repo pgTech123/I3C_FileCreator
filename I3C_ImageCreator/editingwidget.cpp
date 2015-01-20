@@ -66,9 +66,15 @@ bool EditingWidget::isImage()
 bool EditingWidget::openImage(QString path)
 {
     instanciateImageAndLS();
-    m_Image->open(path.toStdString().c_str());
-    m_Image->convertImageToLayerStack((LayerStack**)&m_PixmapLayerStack);
-    m_QStringPath = path;
+    bool error = m_Image->open(path.toStdString().c_str());
+    if(error == NO_ERRORS){
+        m_Image->convertImageToLayerStack((LayerStack**)&m_PixmapLayerStack);
+        m_QStringPath = path;
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 void EditingWidget::setSavingPath(QString path)

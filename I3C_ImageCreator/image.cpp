@@ -1,7 +1,7 @@
 /*********************************************************
  * Image.cpp
  * Author:      Pascal Gendron
- * Version:     0.0.1
+ * Version:     0.1.0
  * *******************************************************/
 
 #include "image.h"
@@ -37,6 +37,7 @@ int Image::open(const char* path)
         ifstream file;
         file.open(m_strFilePath.c_str());
         if(file.is_open()){
+            m_i3cFile.deleteImageData();
             readHeader(&file);
             readPixels(&file);
             readReferences(&file);
@@ -297,17 +298,68 @@ int Image::setCubePixels(LayerStack *layerStack, int x, int y, int z)
 
 void Image::readHeader(ifstream *file)
 {
-    //TODO
+    int sideSize;
+    *file >> sideSize;
+    m_i3cFile.setSideSize(sideSize);
+
+    int numOfLevels = firstHighBit(sideSize);
+    int buffer = 0;
+
+    for(int level = 1; level <= numOfLevels; level++){
+        *file >> buffer;
+        m_i3cFile.setTotalCubesAtLevel(level, buffer);
+    }
 }
 
 void Image::readPixels(ifstream *file)
 {
-    //TODO:
+    int cubesAtLevel1 = m_i3cFile.countTotalCubesAtLevel(1);
+
+    int i_map = 0;
+    int red;
+    int green;
+    int blue;
+    Pixel pixels[8];
+    CubeMap map;
+
+    for(int i = 0; i < cubesAtLevel1; i++){
+        /* Map Reading */
+        *file >> i_map;
+        map.map = (unsigned char) i_map;
+        map.x = 0;
+        map.y = 0;
+        map.z = 0;
+
+        /* Pixel Reading */
+        for(int pixel = 0; pixel < 8; pixel++){
+            if(i_map & (0x01 << pixel)){
+                *file >> red;
+                *file >> green;
+                *file >> blue;
+
+                /* Convert to pixel */
+                pixels[pixel].red = red;
+                pixels[pixel].green = green;
+                pixels[pixel].blue = blue;
+            }
+        }
+
+        /* Set these data in m_i3cFile */
+        m_i3cFile.setPixel(map, pixels);
+    }
 }
 
 void Image::readReferences(ifstream *file)
 {
-    //TODO
+    int numOfLevel = m_i3cFile.getNumOfLevel();
+    int i_map = 0;
+
+    for(int level = 2; level < numOfLevel; level ++){
+        for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(level); i++){
+            *file >> i_map;
+            //TODO: insert in i3c
+        }
+    }
 }
 
 void Image::writeHeader(ofstream *file)

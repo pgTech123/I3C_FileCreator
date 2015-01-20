@@ -22,7 +22,6 @@ void i3cFile::resetImage()
 {
     int tmpSideSize = m_iSideSize;
     deleteImageData();
-    initMembers();
     setSideSize(tmpSideSize);
 }
 
@@ -188,6 +187,17 @@ int i3cFile::countTotalCubesAtLevel(int level)
     }
 }
 
+void i3cFile::setTotalCubesAtLevel(int level, int numberOfCubes)
+{
+    if(level < 1 || level > m_iNumOfLevels){
+        return;
+    }
+
+    m_iptrTotalCubesAtLevel[level - 1] = numberOfCubes;
+    m_iCurrentLevel = level;
+    allocateChilds(numberOfCubes);
+}
+
 void i3cFile::initMembers()
 {
     /*Init image data*/
@@ -251,6 +261,7 @@ void i3cFile::deleteImageData()
      if(m_iptrTotalCubesAtLevel != NULL){
          delete[] m_iptrTotalCubesAtLevel;
      }
+     initMembers();
 }
 
 void i3cFile::delete2DUCArray(unsigned char **array, int arraySize2ndD)

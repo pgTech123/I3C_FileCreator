@@ -1,7 +1,7 @@
 /*********************************************************
  * Image.h
  * Author:      Pascal Gendron
- * Version:     0.0.1
+ * Version:     0.1.0
  * *******************************************************/
 
 #ifndef IMAGE_H
@@ -23,7 +23,11 @@
  * interactions with the file(open&save).
  * *******************************************************************/
 
-//TODO: Make sure of position of map
+/* ****************************************************************************
+ * Warning: When opening an image, cube position are not loaded in m_i3cFile.
+ *          This is not supposed to rise any concern for normal usage of this
+ *          class.
+ * ****************************************************************************/
 
 using namespace std;
 class Image
