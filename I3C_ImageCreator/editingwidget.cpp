@@ -47,7 +47,7 @@ void EditingWidget::setHistoryReference(History *history)
 void EditingWidget::newImage(int sideSize)
 {
     instanciateImageAndLS();
-
+    m_QStringPath.clear();
     m_Image->setSideSize(sideSize);
     m_PixmapLayerStack->setSideSize(sideSize);
 
@@ -68,7 +68,8 @@ bool EditingWidget::openImage(QString path)
     instanciateImageAndLS();
     bool error = m_Image->open(path.toStdString().c_str());
     if(error == NO_ERRORS){
-        m_Image->convertImageToLayerStack((LayerStack**)&m_PixmapLayerStack);
+        m_Image->convertImageToLayerStack(m_PixmapLayerStack);
+        initDisplayLayerStack();
         m_QStringPath = path;
         return true;
     }

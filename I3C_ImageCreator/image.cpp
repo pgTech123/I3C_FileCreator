@@ -132,12 +132,12 @@ int Image::convertLayerStackToImage(LayerStack *layerStack)
     return error;
 }
 
-int Image::convertImageToLayerStack(LayerStack **ptrLayerStack)
+int Image::convertImageToLayerStack(LayerStack *ptrLayerStack)
 {
     if(m_i3cFile.isInitialized()){
-        (*ptrLayerStack)->setSideSize(m_i3cFile.getSideSize());
-
-        //TODO
+        ptrLayerStack->setSideSize(m_i3cFile.getSideSize());
+        // TODO: write one pixel at the time(call to get layer,
+        // then setPixel)
 
         return NO_ERRORS;
     }
@@ -353,11 +353,13 @@ void Image::readReferences(ifstream *file)
 {
     int numOfLevel = m_i3cFile.getNumOfLevel();
     int i_map = 0;
+    CubeMap map;
 
     for(int level = 2; level < numOfLevel; level ++){
         for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(level); i++){
             *file >> i_map;
-            //TODO: insert in i3c
+            map.map = (unsigned char)i_map;
+            m_i3cFile.setMapAndPos(level, map);
         }
     }
 }

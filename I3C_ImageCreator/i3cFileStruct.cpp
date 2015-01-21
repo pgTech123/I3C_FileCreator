@@ -221,10 +221,15 @@ void i3cFile::initMembers()
 
 void i3cFile::allocateChilds(int size)
 {
-    m_MapsAndPos[m_iCurrentLevel-1] = new CubeMap[size];
-    m_bMapLocked[m_iCurrentLevel-1] = false;
+    if(m_MapsAndPos[m_iCurrentLevel-1] == NULL){
+        m_MapsAndPos[m_iCurrentLevel-1] = new CubeMap[size];
+    }
+    if(m_bMapLocked[m_iCurrentLevel-1]){
+        m_bMapLocked[m_iCurrentLevel-1] = false;
+    }
 
-    if(m_iCurrentLevel == 1){
+    if(m_iCurrentLevel == 1 && m_ucRed == NULL &&
+            m_ucGreen == NULL && m_ucBlue == NULL){
         /* Allocate space for pixels */
         m_ucRed = new unsigned char* [size];
         m_ucGreen = new unsigned char* [size];

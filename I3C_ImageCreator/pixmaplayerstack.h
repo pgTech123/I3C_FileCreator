@@ -7,6 +7,9 @@
 #include "layer.h"
 #include "pixel.h"
 
+#include <iostream>
+using namespace std;
+
 
 /*****************************************************************************
  * The purpose of this class is to contain a stack of pixmap layer and to provide

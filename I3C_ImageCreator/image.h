@@ -49,7 +49,7 @@ public:
 
     /* Conversion */
     int convertLayerStackToImage(LayerStack *layerStack);
-    int convertImageToLayerStack(LayerStack **ptrLayerStack);
+    int convertImageToLayerStack(LayerStack *ptrLayerStack);
 
 private:
     void writeExtension();
