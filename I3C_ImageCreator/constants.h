@@ -8,7 +8,7 @@
 #define UNABLE_TO_OPEN_FILE     4
 
 #define INDEX_OUT_OF_RANGE      10
-#define LEVLE_OUT_OF_RANGE      11
+#define LEVEL_OUT_OF_RANGE      11
 #define LEVEL_NOT_ACCESSIBLE    12
 #define LEVEL_LOCKED            13
 

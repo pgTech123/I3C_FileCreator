@@ -136,8 +136,34 @@ int Image::convertImageToLayerStack(LayerStack *ptrLayerStack)
 {
     if(m_i3cFile.isInitialized()){
         ptrLayerStack->setSideSize(m_i3cFile.getSideSize());
-        // TODO: write one pixel at the time(call to get layer,
-        // then setPixel)
+
+        CubeMap pixMap;
+        ChildCorners childCorners;
+        unsigned char red;
+        unsigned char green;
+        unsigned char blue;
+        int x;
+        int y;
+        int z;
+
+        for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(1); i++){
+            pixMap = m_i3cFile.getMapAndPos(1, i);
+            childCorners = generateChildCorners(pixMap, 2);
+
+            for(int pix = 0; pix < 8; pix++){
+                if(pixMap.map & (0x01 << pix)){
+                    red = m_i3cFile.getRed(i, pix);
+                    green = m_i3cFile.getGreen(i, pix);
+                    blue = m_i3cFile.getBlue(i, pix);
+
+                    x = childCorners.x[pix];
+                    y = childCorners.y[pix];
+                    z = childCorners.z[pix];
+
+                    ptrLayerStack->getLayer(z)->writePixel(x, y, red, green, blue);
+                }
+            }
+        }
 
         return NO_ERRORS;
     }
@@ -182,7 +208,7 @@ int Image::convertReferencesLS2Img(LayerStack* layerStack, int level)
 {
     /* Verify parameters */
     if(level > m_i3cFile.getNumOfLevel()){
-        return LEVLE_OUT_OF_RANGE;
+        return LEVEL_OUT_OF_RANGE;
     }
 
     if(level == m_i3cFile.getNumOfLevel()){
@@ -296,6 +322,36 @@ int Image::setCubePixels(LayerStack *layerStack, int x, int y, int z)
     return m_i3cFile.setPixel(map, pixels);
 }
 
+void Image::computeMapPos()
+{
+    if(m_i3cFile.isInitialized()){
+        CubeMap mapTmp;
+        CubeMap parentMap;
+        int offset = 0;
+
+        /* First level already set. Set the others */
+        for(int level = m_i3cFile.getNumOfLevel(); level > 1; level--){
+            for(int a = 0; a < m_i3cFile.countTotalCubesAtLevel(level); a++){
+                parentMap = m_i3cFile.getMapAndPos(level, a);
+                int mapSideLen = pow(2, level);
+                ChildCorners childcorners = generateChildCorners(parentMap, mapSideLen);
+
+                for(int i = 0; i < 8; i++){
+                    if(parentMap.map & (0x01 << i)){
+                        mapTmp = m_i3cFile.getMapAndPos(level - 1, offset);
+                        mapTmp.x = childcorners.x[i];
+                        mapTmp.y = childcorners.y[i];
+                        mapTmp.z = childcorners.z[i];
+                        m_i3cFile.setMapAndPos(level - 1, offset, mapTmp);
+                        offset ++;
+                    }
+                }
+            }
+            offset = 0;
+        }
+    }
+}
+
 void Image::readHeader(ifstream *file)
 {
     int sideSize;
@@ -354,14 +410,18 @@ void Image::readReferences(ifstream *file)
     int numOfLevel = m_i3cFile.getNumOfLevel();
     int i_map = 0;
     CubeMap map;
+    map.x = 0;
+    map.y = 0;
+    map.z = 0;
 
-    for(int level = 2; level < numOfLevel; level ++){
+    for(int level = 2; level <= numOfLevel; level ++){
         for(int i = 0; i < m_i3cFile.countTotalCubesAtLevel(level); i++){
             *file >> i_map;
             map.map = (unsigned char)i_map;
-            m_i3cFile.setMapAndPos(level, map);
+            m_i3cFile.setMapAndPos(level, i, map);
         }
     }
+    computeMapPos();
 }
 
 void Image::writeHeader(ofstream *file)

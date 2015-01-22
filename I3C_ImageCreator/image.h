@@ -23,12 +23,6 @@
  * interactions with the file(open&save).
  * *******************************************************************/
 
-/* ****************************************************************************
- * Warning: When opening an image, cube position are not loaded in m_i3cFile.
- *          This is not supposed to rise any concern for normal usage of this
- *          class.
- * ****************************************************************************/
-
 using namespace std;
 class Image
 {
@@ -62,6 +56,8 @@ private:
     int setChildMap(LayerStack *layerStack, int x, int y, int z, int level, int sideSize);
     CubeMap getMapFromLayerStack(LayerStack *layerStack, int x, int y, int z, int sideSize);
     int setCubePixels(LayerStack *layerStack, int x, int y, int z);
+
+    void computeMapPos();
 
     void readHeader(ifstream *file);
     void readPixels(ifstream *file);

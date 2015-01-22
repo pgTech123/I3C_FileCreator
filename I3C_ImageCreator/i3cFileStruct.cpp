@@ -97,6 +97,18 @@ int i3cFile::setMapAndPos(int level, CubeMap mapAndPos)
     return LEVEL_NOT_ACCESSIBLE;
 }
 
+int i3cFile::setMapAndPos(int level, int index, CubeMap mapAndPos)
+{
+    if(level <= m_iNumOfLevels && level > 0){
+       if(index < m_iptrTotalCubesAtLevel[level-1] && index >= 0){
+           m_MapsAndPos[level-1][index] = mapAndPos;
+           return NO_ERRORS;
+       }
+       return INDEX_OUT_OF_RANGE;
+    }
+    return LEVEL_OUT_OF_RANGE;
+}
+
 CubeMap i3cFile::getMapAndPos(int level, int index)
 {
     if(!m_bMapLocked[level-1]){

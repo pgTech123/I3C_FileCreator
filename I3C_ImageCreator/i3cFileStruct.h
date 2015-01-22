@@ -34,6 +34,7 @@ public:
     int getNumOfLevel();
 
     int setMapAndPos(int level, CubeMap mapAndPos);
+    int setMapAndPos(int level, int index, CubeMap mapAndPos);
     CubeMap getMapAndPos(int level, int index);
 
     int setPixel(CubeMap map, Pixel pixels[8]);
