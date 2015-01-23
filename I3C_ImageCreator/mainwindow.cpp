@@ -141,6 +141,9 @@ void MainWindow::on_actionOpen_triggered()
         }
     }
     QString path = QFileDialog::getOpenFileName(this, "Load an Image", QString(), "3D Image(*.i3c)");
+    if(path == NULL){   //Cancel Button Pressed
+        return;
+    }
     if(!m_EditingWidget->openImage(path)){
         QMessageBox::warning(this, "ERROR", "An error orrured while trying to open an this image...");
     }
@@ -164,6 +167,9 @@ void MainWindow::on_actionSave_As_triggered()
     if(m_EditingWidget->isImage()){
         QString path = QFileDialog::getSaveFileName(this, "Save Image As...",
                                                 QString(), "3D Image (*.i3c)");
+        if(path == NULL){   //Cancel Button Pressed
+            return;
+        }
         if(!m_EditingWidget->save(path)){
             QMessageBox::warning(this, "ERROR",
                                  tr("An error occured trying to save the image. Make sure the file is not")+

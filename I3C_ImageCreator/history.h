@@ -27,11 +27,20 @@ public slots:
 
 signals:
     void newElementInHistory();
+    void undoCall(HistoryElement);
+    void redoCall(HistoryElement);
+
     void enableUndoButton(bool enable);
     void enableRedoButton(bool enable);
 
 private:
     HistoryElement *m_HistoryArray;
+
+    int m_iHistoryLenght;
+
+    int m_iCurrent;
+    int m_iUpBoundary;
+    int m_iDwnBoundary;
 };
 
 #endif // HISTORY_H

@@ -18,6 +18,10 @@ History::~History()
 void History::initHistory(int historyLenght)
 {
     m_HistoryArray = new HistoryElement[historyLenght];
+    m_iHistoryLenght = historyLenght;
+    m_iCurrent = 0;
+    m_iDwnBoundary = 0;
+    m_iUpBoundary = 0;
 }
 
 void History::appendHistoryElement(HistoryElement element)
@@ -28,15 +32,64 @@ void History::appendHistoryElement(HistoryElement element)
 
 void History::appendHistoryElementSilently(HistoryElement element)
 {
-    //TODO
+    if(m_iCurrent == m_iUpBoundary){
+        m_iUpBoundary ++;
+        if(m_iUpBoundary >= m_iHistoryLenght){
+            m_iUpBoundary -= m_iHistoryLenght;
+        }
+
+        m_HistoryArray[m_iCurrent] = element;
+    }
+    else{
+        m_iCurrent++;
+        if(m_iCurrent >= m_iHistoryLenght){
+            m_iCurrent -= m_iHistoryLenght;
+        }
+
+        m_iUpBoundary = m_iCurrent + 1;
+        if(m_iUpBoundary >= m_iHistoryLenght){
+            m_iUpBoundary -= m_iHistoryLenght;
+        }
+
+        m_HistoryArray[m_iCurrent] = element;
+    }
+
+    if(m_iDwnBoundary == m_iUpBoundary){
+        m_iDwnBoundary ++;
+        if(m_iDwnBoundary >= m_iHistoryLenght){
+            m_iDwnBoundary -= m_iHistoryLenght;
+        }
+    }
+
+    /* See if we need to update buttons */
+    if(m_iCurrent == m_iDwnBoundary){
+        emit enableUndoButton(false);
+    }
+    if(m_iCurrent == m_iUpBoundary){
+        emit enableRedoButton(false);
+    }
 }
 
 void History::undo()
 {
-    //TODO: make a call
+    if(m_iCurrent != m_iDwnBoundary){
+        m_iCurrent --;
+        emit undoCall(m_HistoryArray[m_iCurrent]);
+    }
+
+    if(m_iCurrent == m_iDwnBoundary){
+        emit enableUndoButton(false);
+    }
 }
 
 void History::redo()
 {
-    //TODO: make a call
+    if(m_iCurrent != m_iUpBoundary){
+        m_iCurrent ++;
+        emit redoCall(m_HistoryArray[m_iCurrent]);
+    }
+
+    if(m_iCurrent == m_iUpBoundary){
+        emit enableRedoButton(false);
+    }
 }

@@ -51,7 +51,6 @@ void EditingWidget::newImage(int sideSize)
     m_Image->setSideSize(sideSize);
     m_PixmapLayerStack->setSideSize(sideSize);
 
-
     initDisplayLayerStack();
 }
 
@@ -70,6 +69,7 @@ bool EditingWidget::openImage(QString path)
     if(error == NO_ERRORS){
         m_Image->convertImageToLayerStack(m_PixmapLayerStack);
         initDisplayLayerStack();
+        m_PixmapLayerStack->goToLayer(0);
         m_QStringPath = path;
         return true;
     }
