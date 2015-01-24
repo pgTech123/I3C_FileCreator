@@ -17,7 +17,8 @@ SOURCES += \
     layerstackui.cpp \
     editingwidget.cpp \
     history.cpp \
-    historyelement.cpp
+    historyelement.cpp \
+    drawinghistory.cpp
 
 FORMS += \
     mainwindow.ui \
@@ -44,4 +45,5 @@ HEADERS += \
     layerstackui.h \
     editingwidget.h \
     history.h \
-    historyelement.h
+    historyelement.h \
+    drawinghistory.h

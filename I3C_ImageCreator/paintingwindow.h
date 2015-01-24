@@ -9,6 +9,7 @@
 
 #include <QDockWidget>
 #include <QCloseEvent>
+#include <QColorDialog>     //TODO: Use that
 #include "colorpad.h"
 
 #define NUM_OF_COLOR_PADS   25

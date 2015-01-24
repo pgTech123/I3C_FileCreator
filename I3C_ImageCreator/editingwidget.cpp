@@ -24,6 +24,14 @@ void EditingWidget::instanciateImageAndLS()
     deleteImageAndLS();
     m_Image = new Image();
     m_PixmapLayerStack = new PixmapLayerStack(this);
+
+    /* Make connections */
+    connect(m_History, SIGNAL(undoCall(HistoryElement)),
+            m_PixmapLayerStack->getUIQLabel(), SLOT(historyCall(HistoryElement)));
+    connect(m_History, SIGNAL(redoCall(HistoryElement)),
+            m_PixmapLayerStack->getUIQLabel(), SLOT(historyCall(HistoryElement)));
+    connect(m_PixmapLayerStack->getUIQLabel(), SIGNAL(modificationMade(HistoryElement)),
+            m_History, SLOT(appendHistoryElement(HistoryElement)));
 }
 
 void EditingWidget::deleteImageAndLS()
@@ -33,6 +41,14 @@ void EditingWidget::deleteImageAndLS()
         m_Image = NULL;
     }
     if(m_PixmapLayerStack != NULL){
+        /* Clear connections */
+        disconnect(m_History, SIGNAL(undoCall(HistoryElement)),
+                   m_PixmapLayerStack->getUIQLabel(), SLOT(historyCall(HistoryElement)));
+        disconnect(m_History, SIGNAL(redoCall(HistoryElement)),
+                   m_PixmapLayerStack->getUIQLabel(), SLOT(historyCall(HistoryElement)));
+        disconnect(m_PixmapLayerStack->getUIQLabel(), SIGNAL(modificationMade(HistoryElement)),
+                m_History, SLOT(appendHistoryElement(HistoryElement)));
+
         delete m_PixmapLayerStack;
         m_PixmapLayerStack = NULL;
     }
@@ -41,7 +57,6 @@ void EditingWidget::deleteImageAndLS()
 void EditingWidget::setHistoryReference(History *history)
 {
     m_History = history;
-    //TODO: Connections
 }
 
 void EditingWidget::newImage(int sideSize)

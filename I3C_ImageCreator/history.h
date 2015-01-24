@@ -14,9 +14,6 @@ public:
     History(int historyLenght);
     ~History();
 
-    void appendHistoryElement(HistoryElement element);
-    void appendHistoryElementSilently(HistoryElement element);
-
 private:
     void initHistory(int historyLenght);
 
@@ -24,6 +21,9 @@ public slots:
     /* Triggered by Calls from MainWindow */
     void undo();
     void redo();
+
+    void appendHistoryElement(HistoryElement element);
+    void appendHistoryElementSilently(HistoryElement element);
 
 signals:
     void newElementInHistory();

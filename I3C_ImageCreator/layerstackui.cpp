@@ -25,15 +25,15 @@ layerStackUI::~layerStackUI()
 void layerStackUI::resizeEvent(QResizeEvent*)
 {
     if(m_LayerStack->isSideSizeSet()){
-        /* x 0.8 to be able to size down*/
+        /* x 0.8 to be able to size down */
         int newHeight = this->height()*0.8;
         int newWidth = this->width()*0.8;
 
-        /* As we draw on this image, we dont want to unzoom too much*/
+        /* As we draw on this image, we dont want to unzoom too much */
         if(newWidth >= m_LayerStack->getSideSize() && newHeight >= m_LayerStack->getSideSize()){
             m_PixmapScaled = m_frame->scaled(newWidth, newHeight, Qt::KeepAspectRatio);
 
-            /* Adjust scale factor between real size of 1 pixel and the size of 1 pix displayed*/
+            /* Adjust scale factor between real size of 1 pixel and the size of 1 pix displayed */
             m_dPixelToPixelFactor = (double)m_LayerStack->getSideSize() / (double)m_PixmapScaled.width();
             m_iOffsetCorrection = m_PixmapScaled.width() * 0.125 * m_dPixelToPixelFactor;
         }
@@ -159,4 +159,9 @@ void layerStackUI::addPixmapInTransparency(QPixmap *layer)
          }
      }
      m_Painter->end();
+ }
+
+ void layerStackUI::historyCall(HistoryElement history)
+ {
+
  }
