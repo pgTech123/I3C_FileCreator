@@ -50,39 +50,55 @@ void layerStackUI::mousePressEvent(QMouseEvent *event)
 {
     m_bMouseButtonDwn = true;
     //TODO: Condition is in drawable widget
-    /* Draw on Layer*/
-    m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(event->x()*m_dPixelToPixelFactor,
-                                             event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
-                                             m_iRed,
-                                             m_iGreen,
-                                             m_iBlue);
+
+    /***************************************************************
+     * Draw on Layer
+     * Warning: update must be called before write pixel for history
+     ***************************************************************/
     updateDisplayedLayer(event->x()*m_dPixelToPixelFactor,
                          event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
                          m_iRed,
                          m_iGreen,
                          m_iBlue);
+
+    m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(event->x()*m_dPixelToPixelFactor,
+                                             event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
+                                             m_iRed,
+                                             m_iGreen,
+                                             m_iBlue);
 }
 
 void layerStackUI::mouseReleaseEvent(QMouseEvent*)
 {
     m_bMouseButtonDwn = false;
+
+    /* Manage History */
+    DrawingHistory historyElement;
+    historyElement.setDelta(historyData);
+    emit modificationMade(historyElement);
+    historyData.clear();
 }
 
 void layerStackUI::mouseMoveEvent(QMouseEvent *event)
 {
     if(m_bMouseButtonDwn){
         //TODO: Condition is in drawable widget
-        /* Draw on Layer */
-        m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(event->x()*m_dPixelToPixelFactor,
-                                                 event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
-                                                 m_iRed,
-                                                 m_iGreen,
-                                                 m_iBlue);
+
+        /***************************************************************
+         * Draw on Layer
+         * Warning: update must be called before write pixel for history
+         ***************************************************************/
         updateDisplayedLayer(event->x()*m_dPixelToPixelFactor,
                              event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
                              m_iRed,
                              m_iGreen,
                              m_iBlue);
+
+        m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(event->x()*m_dPixelToPixelFactor,
+                                                 event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
+                                                 m_iRed,
+                                                 m_iGreen,
+                                                 m_iBlue);
     }
 }
 
@@ -132,6 +148,22 @@ void layerStackUI::updateDisplayedLayer(int x, int y, int r, int g, int b)
     m_Painter->drawPoint(x,y);
     m_Painter->end();
     resizeEvent(NULL);
+
+    /* Compute delta */
+    Pixel previousPixel = m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getPixel(x, y);
+    unsigned char previousTransparency = m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getTransparency(x, y);
+
+    PixelData delta;
+    delta.deltaPixelRed= previousPixel.red - r;
+    delta.deltaPixelGreen = previousPixel.green - g;
+    delta.deltaPixelBlue = previousPixel.blue - b;
+    delta.deltaTransparency = previousTransparency - 255;
+
+    delta.x = x;
+    delta.y = y;
+    delta.z = m_LayerStack->getCurrentLayer();
+
+    historyData.append(delta);
 }
 
 void layerStackUI::addPixmapInTransparency(QPixmap *layer)
@@ -142,26 +174,31 @@ void layerStackUI::addPixmapInTransparency(QPixmap *layer)
     m_Painter->end();
 }
 
- void layerStackUI::putLayerInPixmap(Layer *layer, QPixmap *pixmap)
- {
-     int sideSize = layer->getSideSize();
-     Pixel bufPixel;
+void layerStackUI::putLayerInPixmap(Layer *layer, QPixmap *pixmap)
+{
+    int sideSize = layer->getSideSize();
+    Pixel bufPixel;
 
-     m_Painter->begin(pixmap);
+    m_Painter->begin(pixmap);
 
-     for(int x = 0; x < sideSize; x++){
-         for(int y = 0; y < sideSize; y++){
-             bufPixel = layer->getPixel(x, y);
-             m_Painter->setPen(QPen(QBrush(QColor(bufPixel.red,
-                                                  bufPixel.green,
-                                                  bufPixel.blue)),1));
-             m_Painter->drawPoint(x,y);
-         }
-     }
-     m_Painter->end();
- }
+    for(int x = 0; x < sideSize; x++){
+        for(int y = 0; y < sideSize; y++){
+            bufPixel = layer->getPixel(x, y);
+            m_Painter->setPen(QPen(QBrush(QColor(bufPixel.red,
+                                                 bufPixel.green,
+                                                 bufPixel.blue)),1));
+            m_Painter->drawPoint(x,y);
+        }
+    }
+    m_Painter->end();
+}
 
- void layerStackUI::historyCall(HistoryElement history)
- {
+void layerStackUI::historyUndoCall(DrawingHistory history)
+{
 
- }
+}
+
+void layerStackUI::historyRedoCall(DrawingHistory history)
+{
+
+}

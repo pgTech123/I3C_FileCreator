@@ -12,6 +12,7 @@ class HistoryElement
 {
 public:
     HistoryElement();
+    virtual ~HistoryElement();
 };
 
 #endif // HISTORYELEMENT_H

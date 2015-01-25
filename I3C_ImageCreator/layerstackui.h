@@ -43,7 +43,8 @@ signals:
 public slots:
     void setActiveColor(int red, int green, int blue);
 
-    void historyCall(HistoryElement history);
+    void historyUndoCall(DrawingHistory history);
+    void historyRedoCall(DrawingHistory history);
 
 signals:
     void modificationMade(HistoryElement history);
@@ -67,6 +68,9 @@ private:
     int m_iRed;
     int m_iGreen;
     int m_iBlue;
+
+    /* History */
+    QList<PixelData> historyData;
 };
 
 #endif // LAYERSTACKUI_H

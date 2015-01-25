@@ -3,3 +3,7 @@
 HistoryElement::HistoryElement()
 {
 }
+
+HistoryElement::~HistoryElement()
+{
+}

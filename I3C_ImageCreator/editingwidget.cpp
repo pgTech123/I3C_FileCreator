@@ -27,9 +27,9 @@ void EditingWidget::instanciateImageAndLS()
 
     /* Make connections */
     connect(m_History, SIGNAL(undoCall(HistoryElement)),
-            m_PixmapLayerStack->getUIQLabel(), SLOT(historyCall(HistoryElement)));
+            m_PixmapLayerStack->getUIQLabel(), SLOT(historyUndoCall(DrawingHistory)));
     connect(m_History, SIGNAL(redoCall(HistoryElement)),
-            m_PixmapLayerStack->getUIQLabel(), SLOT(historyCall(HistoryElement)));
+            m_PixmapLayerStack->getUIQLabel(), SLOT(historyRedoCall(DrawingHistory)));
     connect(m_PixmapLayerStack->getUIQLabel(), SIGNAL(modificationMade(HistoryElement)),
             m_History, SLOT(appendHistoryElement(HistoryElement)));
 }
@@ -43,9 +43,9 @@ void EditingWidget::deleteImageAndLS()
     if(m_PixmapLayerStack != NULL){
         /* Clear connections */
         disconnect(m_History, SIGNAL(undoCall(HistoryElement)),
-                   m_PixmapLayerStack->getUIQLabel(), SLOT(historyCall(HistoryElement)));
+                   m_PixmapLayerStack->getUIQLabel(), SLOT(historyUndoCall(DrawingHistory)));
         disconnect(m_History, SIGNAL(redoCall(HistoryElement)),
-                   m_PixmapLayerStack->getUIQLabel(), SLOT(historyCall(HistoryElement)));
+                   m_PixmapLayerStack->getUIQLabel(), SLOT(historyRedoCall(DrawingHistory)));
         disconnect(m_PixmapLayerStack->getUIQLabel(), SIGNAL(modificationMade(HistoryElement)),
                 m_History, SLOT(appendHistoryElement(HistoryElement)));
 

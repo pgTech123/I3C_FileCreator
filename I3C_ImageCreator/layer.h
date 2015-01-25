@@ -31,6 +31,7 @@ public:
     int getSideSize();
 
     unsigned char* getTransparencyMapPtr();
+    unsigned char getTransparency(int x, int y);
     Pixel getPixel(int x, int y);
     Pixel getPixel(int index);
 

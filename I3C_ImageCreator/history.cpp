@@ -32,8 +32,9 @@ void History::appendHistoryElement(HistoryElement element)
 
 void History::appendHistoryElementSilently(HistoryElement element)
 {
+    //FIXME: Problem in logic
+
     if(m_iCurrent == m_iUpBoundary){
-        m_iUpBoundary ++;
         if(m_iUpBoundary >= m_iHistoryLenght){
             m_iUpBoundary -= m_iHistoryLenght;
         }
@@ -65,8 +66,14 @@ void History::appendHistoryElementSilently(HistoryElement element)
     if(m_iCurrent == m_iDwnBoundary){
         emit enableUndoButton(false);
     }
+    else{
+        emit enableUndoButton(true);
+    }
     if(m_iCurrent == m_iUpBoundary){
         emit enableRedoButton(false);
+    }
+    else{
+        emit enableRedoButton(true);
     }
 }
 

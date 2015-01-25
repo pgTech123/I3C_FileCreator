@@ -41,6 +41,13 @@ unsigned char* Layer::getTransparencyMapPtr()
     return m_transparencyMap;
 }
 
+unsigned char Layer::getTransparency(int x, int y)
+{
+    int indexInImage = x + (m_iSideSize * y);
+
+    return m_transparencyMap[indexInImage];
+}
+
 Pixel Layer::getPixel(int x, int y)
 {
     int indexInImage = x + (m_iSideSize * y);
