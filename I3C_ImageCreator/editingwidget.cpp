@@ -26,12 +26,12 @@ void EditingWidget::instanciateImageAndLS()
     m_PixmapLayerStack = new PixmapLayerStack(this);
 
     /* Make connections */
-    connect(m_History, SIGNAL(undoCall(HistoryElement)),
-            m_PixmapLayerStack->getUIQLabel(), SLOT(historyUndoCall(DrawingHistory)));
-    connect(m_History, SIGNAL(redoCall(HistoryElement)),
-            m_PixmapLayerStack->getUIQLabel(), SLOT(historyRedoCall(DrawingHistory)));
-    connect(m_PixmapLayerStack->getUIQLabel(), SIGNAL(modificationMade(HistoryElement)),
-            m_History, SLOT(appendHistoryElement(HistoryElement)));
+    connect(m_History, SIGNAL(undoCall(LocalHistory*)),
+            m_PixmapLayerStack->getUIQLabel(), SLOT(historyUndoCall(LocalHistory*)));
+    connect(m_History, SIGNAL(redoCall(LocalHistory*)),
+            m_PixmapLayerStack->getUIQLabel(), SLOT(historyRedoCall(LocalHistory*)));
+    connect(m_PixmapLayerStack->getUIQLabel(), SIGNAL(modificationMade(LocalHistory*)),
+            m_History, SLOT(appendHistoryElement(LocalHistory*)));
 }
 
 void EditingWidget::deleteImageAndLS()
@@ -42,12 +42,12 @@ void EditingWidget::deleteImageAndLS()
     }
     if(m_PixmapLayerStack != NULL){
         /* Clear connections */
-        disconnect(m_History, SIGNAL(undoCall(HistoryElement)),
-                   m_PixmapLayerStack->getUIQLabel(), SLOT(historyUndoCall(DrawingHistory)));
-        disconnect(m_History, SIGNAL(redoCall(HistoryElement)),
-                   m_PixmapLayerStack->getUIQLabel(), SLOT(historyRedoCall(DrawingHistory)));
-        disconnect(m_PixmapLayerStack->getUIQLabel(), SIGNAL(modificationMade(HistoryElement)),
-                m_History, SLOT(appendHistoryElement(HistoryElement)));
+        disconnect(m_History, SIGNAL(undoCall(LocalHistory*)),
+                   m_PixmapLayerStack->getUIQLabel(), SLOT(historyUndoCall(LocalHistory*)));
+        disconnect(m_History, SIGNAL(redoCall(LocalHistory*)),
+                   m_PixmapLayerStack->getUIQLabel(), SLOT(historyRedoCall(LocalHistory*)));
+        disconnect(m_PixmapLayerStack->getUIQLabel(), SIGNAL(modificationMade(LocalHistory*)),
+                m_History, SLOT(appendHistoryElement(LocalHistory*)));
 
         delete m_PixmapLayerStack;
         m_PixmapLayerStack = NULL;

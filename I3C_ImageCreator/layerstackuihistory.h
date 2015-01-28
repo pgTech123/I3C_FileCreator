@@ -1,9 +1,9 @@
-#ifndef DRAWINGHISTORY_H
-#define DRAWINGHISTORY_H
+#ifndef LAYERSTACKUIHISTORY_H
+#define LAYERSTACKUIHISTORY_H
 
 #include <QList>
 #include "pixel.h"
-#include "historyelement.h"
+#include "localhistory.h"
 
 struct PixelData{
     int x;
@@ -15,11 +15,10 @@ struct PixelData{
     int deltaTransparency;
 };
 
-
-class DrawingHistory: public HistoryElement
+class LayerStackUIHistory : public LocalHistory
 {
 public:
-    DrawingHistory();
+    LayerStackUIHistory();
 
     void setDelta(QList<PixelData> changeList);
     QList<PixelData> getDelta();
@@ -28,4 +27,4 @@ private:
     QList<PixelData> m_changeList;
 };
 
-#endif // DRAWINGHISTORY_H
+#endif // LAYERSTACKUIHISTORY_H

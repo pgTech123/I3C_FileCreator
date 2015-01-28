@@ -7,7 +7,7 @@
 #include <QMouseEvent>
 #include <QResizeEvent>
 #include "layerstack.h"
-#include "drawinghistory.h"
+#include "layerstackuihistory.h"
 
 /******************************
  * TODO List
@@ -43,11 +43,11 @@ signals:
 public slots:
     void setActiveColor(int red, int green, int blue);
 
-    void historyUndoCall(DrawingHistory history);
-    void historyRedoCall(DrawingHistory history);
+    void historyUndoCall(LocalHistory *history);
+    void historyRedoCall(LocalHistory *history);
 
 signals:
-    void modificationMade(HistoryElement history);
+    void modificationMade(LocalHistory *history);
 
 private:
     LayerStack *m_LayerStack;

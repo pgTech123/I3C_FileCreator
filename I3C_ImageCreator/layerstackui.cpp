@@ -73,8 +73,8 @@ void layerStackUI::mouseReleaseEvent(QMouseEvent*)
     m_bMouseButtonDwn = false;
 
     /* Manage History */
-    DrawingHistory historyElement;
-    historyElement.setDelta(historyData);
+    LayerStackUIHistory *historyElement = new LayerStackUIHistory();
+    historyElement->setDelta(historyData);
     emit modificationMade(historyElement);
     historyData.clear();
 }
@@ -193,12 +193,14 @@ void layerStackUI::putLayerInPixmap(Layer *layer, QPixmap *pixmap)
     m_Painter->end();
 }
 
-void layerStackUI::historyUndoCall(DrawingHistory history)
+void layerStackUI::historyUndoCall(LocalHistory *history)
 {
-
+    LayerStackUIHistory *historyPtr = (LayerStackUIHistory*)history;
+    cout << historyPtr->getDelta().size() << endl;
 }
 
-void layerStackUI::historyRedoCall(DrawingHistory history)
+void layerStackUI::historyRedoCall(LocalHistory *history)
 {
-
+    LayerStackUIHistory *historyPtr = (LayerStackUIHistory*)history;
+    cout << historyPtr->getDelta().size() << endl;
 }

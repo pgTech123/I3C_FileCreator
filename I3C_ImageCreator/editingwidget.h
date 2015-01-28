@@ -40,8 +40,6 @@ public slots:
 private slots:
     void setCurrentLayer(int currentLayer);
 
-    /*TODO : history callback*/
-
 private:
     void instanciateImageAndLS();
     void deleteImageAndLS();
