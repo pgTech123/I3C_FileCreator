@@ -2,6 +2,7 @@
 
 LayerStackUIHistory::LayerStackUIHistory()
 {
+    id = LOCAL_HISTORY_ID;
 }
 
 void LayerStackUIHistory::setDelta(QList<PixelData> changeList)

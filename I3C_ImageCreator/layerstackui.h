@@ -9,12 +9,6 @@
 #include "layerstack.h"
 #include "layerstackuihistory.h"
 
-/******************************
- * TODO List
- * -Create history (undo & redo fnc)
- *
- * ****************************/
-
 class layerStackUI : public QLabel
 {
     Q_OBJECT

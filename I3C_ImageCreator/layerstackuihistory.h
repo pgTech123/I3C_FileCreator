@@ -5,6 +5,8 @@
 #include "pixel.h"
 #include "localhistory.h"
 
+#define LOCAL_HISTORY_ID    56
+
 struct PixelData{
     int x;
     int y;

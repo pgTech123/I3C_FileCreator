@@ -72,6 +72,12 @@ void Layer::setImageEmpty()
     }
 }
 
+void Layer::setPixelTransparent(int x, int y, unsigned char transparency)
+{
+    int indexInImage = x + (m_iSideSize * y);
+    m_transparencyMap[indexInImage] = transparency;
+}
+
 void Layer::writePixel(int x, int y, int r, int g, int b)
 {
     int indexInImage = x + (m_iSideSize * y);

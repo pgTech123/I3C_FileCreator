@@ -36,6 +36,7 @@ public:
     Pixel getPixel(int index);
 
     void setImageEmpty();
+    void setPixelTransparent(int x, int y, unsigned char transparency = 0);
     void writePixel(int x, int y, int r, int g, int b);
 
 private:

@@ -195,12 +195,31 @@ void layerStackUI::putLayerInPixmap(Layer *layer, QPixmap *pixmap)
 
 void layerStackUI::historyUndoCall(LocalHistory *history)
 {
-    LayerStackUIHistory *historyPtr = (LayerStackUIHistory*)history;
-    cout << historyPtr->getDelta().size() << endl;
+    if(history->getId() == LOCAL_HISTORY_ID){
+        LayerStackUIHistory *historyPtr = (LayerStackUIHistory*)history;
+        QList<PixelData> delta = historyPtr->getDelta();
+
+        for(int i = 0; i < delta.size(); i++){
+            //UNDO
+            PixelData pixelData = delta.at(i);
+            int newTransparency = m_LayerStack->getLayer(pixelData.z)->getTransparency(pixelData.x, pixelData.y)
+                    + pixelData.deltaTransparency;
+            m_LayerStack->getLayer(pixelData.z)->setPixelTransparent(pixelData.x,
+                                                                     pixelData.y,
+                                                                     (unsigned char)newTransparency);
+            cout << pixelData.x << endl;
+        }
+    }
 }
 
 void layerStackUI::historyRedoCall(LocalHistory *history)
 {
-    LayerStackUIHistory *historyPtr = (LayerStackUIHistory*)history;
-    cout << historyPtr->getDelta().size() << endl;
+    if(history->getId() == LOCAL_HISTORY_ID){
+        LayerStackUIHistory *historyPtr = (LayerStackUIHistory*)history;
+        QList<PixelData> delta = historyPtr->getDelta();
+        for(int i = 0; i < delta.size(); i++){
+            //REDO
+            //TODO
+        }
+    }
 }

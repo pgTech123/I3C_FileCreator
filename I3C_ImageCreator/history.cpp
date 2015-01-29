@@ -94,14 +94,21 @@ void History::appendHistoryElementSilently(LocalHistory *element)
 
 void History::undo()
 {
-    if(m_iCurrent != m_iDwnBoundary){
+    int dwnBoundaryPlus1 = m_iDwnBoundary + 1;
+    if(dwnBoundaryPlus1 > m_iHistoryLenght){
+        dwnBoundaryPlus1 -= m_iHistoryLenght;
+    }
+    if(m_iCurrent != m_iDwnBoundary && m_iCurrent != dwnBoundaryPlus1){
         m_iCurrent --;
+        if(m_iCurrent < 0){
+            m_iCurrent += m_iHistoryLenght;
+        }
         emit undoCall(m_HistoryArray[m_iCurrent]);
     }
-
-    if(m_iCurrent == m_iDwnBoundary){
+    else{
         emit enableUndoButton(false);
     }
+
     if(m_iCurrent != m_iUpBoundary){
         emit enableRedoButton(true);
     }
@@ -111,12 +118,15 @@ void History::redo()
 {
     if(m_iCurrent != m_iUpBoundary){
         m_iCurrent ++;
+        if(m_iCurrent >= m_iHistoryLenght){
+            m_iCurrent -= m_iHistoryLenght;
+        }
         emit redoCall(m_HistoryArray[m_iCurrent]);
     }
-
-    if(m_iCurrent == m_iUpBoundary){
+    else{
         emit enableRedoButton(false);
     }
+
     if(m_iCurrent != m_iDwnBoundary){
         emit enableUndoButton(true);
     }
