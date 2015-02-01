@@ -34,6 +34,11 @@ public:
 
     void setId(int id);
 
+    int getRed();
+    int getGreen();
+    int getBlue();
+
+
 private:
     void drawSelectedContour();
 

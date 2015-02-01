@@ -28,7 +28,6 @@ void PixmapLayerStack::setWorkspaceAsCurrentLayer()
     m_qlabelUI->currentLayerChanged();
 }
 
-
 void PixmapLayerStack::layerStackCreated(int sideSize)
 {
     m_qlabelUI->layerStackCreated(sideSize);

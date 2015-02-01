@@ -16,6 +16,7 @@
 #include "newimagedialog.h"
 #include "editingwidget.h"
 #include "paintingwindow.h"
+#include "brushwidget.h"
 #include "aboutus.h"
 
 #include "history.h"
@@ -71,12 +72,14 @@ private slots:
 
     /* Menu View */
     void on_actionPainting_Window_triggered();
+    void on_actionBrush_Window_triggered();
 
     /* Menu Help */
     void on_actionAbout_Us_triggered();
 
     /* Close Calls from Child */
     void paintingWindowClosed();
+    void brushWidgetClosed();
 
 signals:
     void undoSignal();
@@ -92,6 +95,7 @@ private:
     NewImageDialog *m_NewImageDialogWindow;
     EditingWidget *m_EditingWidget;
     PaintingWindow *m_PaintingWidget;
+    BrushWidget *m_BrushWidget;
     AboutUs *m_AboutUsWindow;
 
     History *m_History;

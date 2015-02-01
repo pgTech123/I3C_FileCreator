@@ -73,6 +73,13 @@
        </item>
       </layout>
      </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_ColorPalette">
+       <property name="text">
+        <string>Color Palette</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>

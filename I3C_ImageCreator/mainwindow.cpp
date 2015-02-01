@@ -18,14 +18,17 @@ MainWindow::MainWindow(QWidget *parent) :
     /* Instanciate Permanent Widgets */
     m_EditingWidget = new EditingWidget();
     m_PaintingWidget = new PaintingWindow();
+    m_BrushWidget = new BrushWidget();
     m_AboutUsWindow = new AboutUs();
 
     /* Set Widget in UI */
     ui->gridLayout->addWidget(m_EditingWidget, 0, 0);
     this->addDockWidget(Qt::RightDockWidgetArea, m_PaintingWidget);
+    this->addDockWidget(Qt::RightDockWidgetArea, m_BrushWidget);
 
     /* Connect Close Call to View Menu */
     connect(m_PaintingWidget, SIGNAL(hidden()), this,SLOT(paintingWindowClosed()));
+    connect(m_BrushWidget, SIGNAL(hidden()), this,SLOT(brushWidgetClosed()));
 
     /* Other Connections */
     connect(m_PaintingWidget, SIGNAL(selectedColor(int,int,int)), m_EditingWidget, SLOT(selectedColor(int,int,int)));
@@ -52,6 +55,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete m_EditingWidget;
     delete m_PaintingWidget;
+    delete m_BrushWidget;
     delete m_AboutUsWindow;
 
     delete m_History;
@@ -210,6 +214,16 @@ void MainWindow::on_actionPainting_Window_triggered()
     }
 }
 
+void MainWindow::on_actionBrush_Window_triggered()
+{
+    if(!ui->actionBrush_Window->isChecked()){
+        m_BrushWidget->hide();
+    }
+    else{
+        m_BrushWidget->show();
+    }
+}
+
 /* Menu Help */
 void MainWindow::on_actionAbout_Us_triggered()
 {
@@ -220,4 +234,9 @@ void MainWindow::on_actionAbout_Us_triggered()
 void MainWindow::paintingWindowClosed()
 {
     ui->actionPainting_Window->setChecked(false);
+}
+
+void MainWindow::brushWidgetClosed()
+{
+    ui->actionBrush_Window->setChecked(false);
 }

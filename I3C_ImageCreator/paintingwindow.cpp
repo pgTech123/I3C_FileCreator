@@ -81,3 +81,18 @@ void PaintingWindow::on_spinBoxBlue_valueChanged(int value)
     m_ColorPads[m_iColorPadSelected].setBlue(value);
 }
 
+void PaintingWindow::on_pushButton_ColorPalette_clicked()
+{
+    QColor currentColor;
+    currentColor.setRed(m_ColorPads[m_iColorPadSelected].getRed());
+    currentColor.setGreen(m_ColorPads[m_iColorPadSelected].getGreen());
+    currentColor.setBlue(m_ColorPads[m_iColorPadSelected].getBlue());
+
+    QColor color = QColorDialog::getColor(currentColor, this);
+
+    if(color.isValid()){
+        m_ColorPads[m_iColorPadSelected].setRed(color.red());
+        m_ColorPads[m_iColorPadSelected].setGreen(color.green());
+        m_ColorPads[m_iColorPadSelected].setBlue(color.blue());
+    }
+}

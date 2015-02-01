@@ -9,7 +9,7 @@
 
 #include <QDockWidget>
 #include <QCloseEvent>
-#include <QColorDialog>     //TODO: Use that
+#include <QColorDialog>
 #include "colorpad.h"
 
 #define NUM_OF_COLOR_PADS   25
@@ -44,6 +44,8 @@ private slots:
     void on_spinBoxRed_valueChanged(int value);
     void on_spinBoxGreen_valueChanged(int value);
     void on_spinBoxBlue_valueChanged(int value);
+
+    void on_pushButton_ColorPalette_clicked();
 
 signals:
     void hidden();

@@ -18,14 +18,16 @@ SOURCES += \
     editingwidget.cpp \
     history.cpp \
     localhistory.cpp \
-    layerstackuihistory.cpp
+    layerstackuihistory.cpp \
+    brushwidget.cpp
 
 FORMS += \
     mainwindow.ui \
     aboutus.ui \
     newimagedialog.ui \
     paintingwindow.ui \
-    editingwidget.ui
+    editingwidget.ui \
+    brushwidget.ui
 
 HEADERS += \
     mainwindow.h \
@@ -46,4 +48,5 @@ HEADERS += \
     editingwidget.h \
     history.h \
     localhistory.h \
-    layerstackuihistory.h
+    layerstackuihistory.h \
+    brushwidget.h

@@ -49,6 +49,21 @@ void ColorPad::setId(int id)
     m_iId = id;
 }
 
+int ColorPad::getRed()
+{
+    return m_red;
+}
+
+int ColorPad::getGreen()
+{
+    return m_green;
+}
+
+int ColorPad::getBlue()
+{
+    return m_blue;
+}
+
 void ColorPad::drawSelectedContour()
 {
     QPainter painter(m_PixmapColor);
