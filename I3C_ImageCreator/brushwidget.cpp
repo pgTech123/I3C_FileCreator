@@ -7,6 +7,9 @@ BrushWidget::BrushWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->dockWidgetContents->setLayout(ui->gridLayout);
+
+    m_iBrushSize = 1;
+    m_SelectedBrush = Pen;
 }
 
 BrushWidget::~BrushWidget()
@@ -23,10 +26,24 @@ void BrushWidget::closeEvent(QCloseEvent *closeEvent)
 
 void BrushWidget::on_pushButtonBrush_clicked()
 {
-
+    m_SelectedBrush = Pen;
+    emit brushSelected(m_iBrushSize);
 }
 
 void BrushWidget::on_pushButtonEraser_clicked()
 {
+    m_SelectedBrush = Eraser;
+    emit eraserSelected(m_iBrushSize);
+}
 
+void BrushWidget::on_spinBoxPenSize_valueChanged(int value)
+{
+    m_iBrushSize = value;
+
+    if(m_SelectedBrush == Pen){
+        emit brushSelected(m_iBrushSize);
+    }
+    else if(m_SelectedBrush == Eraser){
+        emit eraserSelected(m_iBrushSize);
+    }
 }

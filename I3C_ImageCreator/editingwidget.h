@@ -36,6 +36,8 @@ public slots:
     void on_horizontalSliderLayer_valueChanged(int value);
 
     void selectedColor(int r, int g, int b);
+    void selectedEraser(int eraserSize);
+    void selectedPen(int penSize);
 
 private slots:
     void setCurrentLayer(int currentLayer);

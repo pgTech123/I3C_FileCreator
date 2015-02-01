@@ -12,6 +12,7 @@ layerStackUI::layerStackUI(QWidget *parent, LayerStack* layerStack) :
     m_iRed = 0;
     m_iGreen = 0;
     m_iBlue = 0;
+    m_iBrushSize = 1;
 }
 
 layerStackUI::~layerStackUI()
@@ -152,11 +153,24 @@ void layerStackUI::setActiveColor(int red, int green, int blue)
     m_iBlue = blue;
 }
 
+void layerStackUI::setEraserSelected(int eraserSize)
+{
+    m_iBrushSize = eraserSize;
+    //TODO
+    cout << "Eraser" << endl;
+}
+
+void layerStackUI::setPenSelected(int penSize)
+{
+    m_iBrushSize = penSize;
+    //TODO
+    cout << "Pen" << endl;
+}
 
 void layerStackUI::updateDisplayedLayer(int x, int y, int r, int g, int b)
 {
     m_Painter->begin(m_frame);
-    m_Painter->setPen(QPen(QBrush(QColor(r, g, b)),1));
+    m_Painter->setPen(QPen(QBrush(QColor(r, g, b)),m_iBrushSize));
     m_Painter->drawPoint(x,y);
     m_Painter->end();
     resizeEvent(NULL);

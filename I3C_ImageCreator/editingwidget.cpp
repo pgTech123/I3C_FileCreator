@@ -121,6 +121,19 @@ void EditingWidget::selectedColor(int r, int g, int b)
     }
 }
 
+void EditingWidget::selectedEraser(int eraserSize)
+{
+    if(m_PixmapLayerStack != NULL){
+        m_PixmapLayerStack->getUIQLabel()->setEraserSelected(eraserSize);
+    }
+}
+
+void EditingWidget::selectedPen(int penSize)
+{
+    if(m_PixmapLayerStack != NULL){
+        m_PixmapLayerStack->getUIQLabel()->setPenSelected(penSize);
+    }
+}
 
 void EditingWidget::on_pushButtonPrevious_clicked()
 {

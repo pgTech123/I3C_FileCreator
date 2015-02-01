@@ -9,6 +9,11 @@
 #include "layerstack.h"
 #include "layerstackuihistory.h"
 
+//DEBUG PURPOSE
+#include <iostream>
+using namespace std;
+//END DEBUG PURPOSE
+
 class layerStackUI : public QLabel
 {
     Q_OBJECT
@@ -37,6 +42,8 @@ signals:
 
 public slots:
     void setActiveColor(int red, int green, int blue);
+    void setEraserSelected(int eraserSize);
+    void setPenSelected(int penSize);
 
     void historyUndoCall(LocalHistory *history);
     void historyRedoCall(LocalHistory *history);
@@ -63,6 +70,7 @@ private:
     int m_iRed;
     int m_iGreen;
     int m_iBlue;
+    int m_iBrushSize;
 
     /* History */
     QList<PixelData> historyData;

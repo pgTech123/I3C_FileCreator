@@ -12,10 +12,10 @@
 #include <QColorDialog>
 #include "colorpad.h"
 
-#define NUM_OF_COLOR_PADS   25
-#define COLOR_PAD_ROWS      5
-#define COLOR_PAD_COLUMN    5
-
+#define NUM_OF_COLOR_PADS       25
+#define COLOR_PAD_ROWS          5
+#define COLOR_PAD_COLUMN        5
+#define NUM_OF_PRESET_COLORS    12
 
 /************************************************************************
  * The purpose of this class is to create the window that allow the user
@@ -36,6 +36,9 @@ public:
     explicit PaintingWindow(QWidget *parent = 0);
     ~PaintingWindow();
     void closeEvent(QCloseEvent *closeEvent);
+
+private:
+    void setPresetColors();
 
 private slots:
     void selectedPad(int r, int g, int b, int id);

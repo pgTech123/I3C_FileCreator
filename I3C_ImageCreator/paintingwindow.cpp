@@ -13,6 +13,7 @@ PaintingWindow::PaintingWindow(QWidget *parent) :
     ui(new Ui::PaintingWindow)
 {
     ui->setupUi(this);
+    ui->dockWidgetContents->setLayout(ui->verticalLayout);
 
     /* Initialize Color Pads */
     m_iColorPadSelected = 0;
@@ -31,8 +32,7 @@ PaintingWindow::PaintingWindow(QWidget *parent) :
             }
         }
     }
-
-    ui->dockWidgetContents->setLayout(ui->verticalLayout);
+    setPresetColors();
 }
 
 PaintingWindow::~PaintingWindow()
@@ -46,6 +46,32 @@ void PaintingWindow::closeEvent(QCloseEvent *closeEvent)
     closeEvent->ignore();
     this->hide();
     emit hidden();
+}
+
+void PaintingWindow::setPresetColors()
+{                                                 /*Red, Gre, Blue*/
+    int presetColors[NUM_OF_PRESET_COLORS * 3] = {  255, 255, 255,
+                                                    255, 0,   0,
+                                                    0,   255, 0,
+                                                    0,   0,   255,
+                                                    255, 255, 0,
+                                                    255, 0,   255,
+                                                    0,   255, 255,
+                                                    128, 128, 128,
+                                                    128, 255, 0,
+                                                    128, 0,   255,
+
+                                                    255, 128, 128,
+                                                    0,   255, 128};
+
+    for(int i = 0; i < NUM_OF_PRESET_COLORS; i++){
+        if(i < NUM_OF_COLOR_PADS){
+            m_ColorPads[i].setRed(presetColors[i*3]);
+            m_ColorPads[i].setGreen(presetColors[i*3 + 1]);
+            m_ColorPads[i].setBlue(presetColors[i*3 + 2]);
+            m_ColorPads[i].unselect();
+        }
+    }
 }
 
 void PaintingWindow::selectedPad(int r, int g, int b, int id)
