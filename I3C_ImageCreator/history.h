@@ -1,13 +1,35 @@
+/*********************************************************
+ * History.h
+ * Author:      Pascal Gendron
+ * Version:     0.1.0
+ * *******************************************************/
+
 #ifndef HISTORY_H
 #define HISTORY_H
 
 #include <QObject>
 #include "localhistory.h"
 
-#include <iostream>
-using namespace std;
-
 #define DEFAULT_HISTORY_SIZE    50
+
+/* **************************************************************
+ * The purpose of this class is to provide a centralized object
+ * where the history would be stored. As the history might contain
+ * different types of elements it only keeps a reference to all of
+ * these elements and make sure to delete them when they are not
+ * needed anymore.
+ *
+ * All these history elements must be derived from local history.
+ * The class that we want to keep track of the history has the
+ * role to create a new instance of the class derived from
+ * LocalHistory and to pass it to History. There is no need to
+ * delete it. This class(History) does this job.
+ * **************************************************************/
+
+/* *****************************************************
+ * Warning: Known bug. When there is only one element
+ * in history, it can be undone but cannot be redone.
+ * *****************************************************/
 
 class History: public QObject
 {
@@ -19,14 +41,17 @@ public:
 
 private:
     void initHistory(int historyLenght);
+    int incrementCursor(int cursor);
+    int decrementCursor(int cursor);
 
 public slots:
-    /* Triggered by Calls from MainWindow */
     void undo();
     void redo();
 
     void appendHistoryElement(LocalHistory *element);
     void appendHistoryElementSilently(LocalHistory *element);
+
+    void updateButtonStatus();
 
 signals:
     void newElementInHistory();
@@ -40,8 +65,6 @@ private:
     LocalHistory **m_HistoryArray;
 
     int m_iHistoryLenght;
-
-    bool m_bHistoryEmpty;
 
     int m_iCurrent;
     int m_iUpBoundary;

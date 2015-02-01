@@ -66,6 +66,12 @@ void layerStackUI::mousePressEvent(QMouseEvent *event)
                                              m_iRed,
                                              m_iGreen,
                                              m_iBlue);
+
+    saveInHistory(event->x()*m_dPixelToPixelFactor,
+                  event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
+                  m_iRed,
+                  m_iGreen,
+                  m_iBlue);
 }
 
 void layerStackUI::mouseReleaseEvent(QMouseEvent*)
@@ -99,6 +105,12 @@ void layerStackUI::mouseMoveEvent(QMouseEvent *event)
                                                  m_iRed,
                                                  m_iGreen,
                                                  m_iBlue);
+
+        saveInHistory(event->x()*m_dPixelToPixelFactor,
+                      event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
+                      m_iRed,
+                      m_iGreen,
+                      m_iBlue);
     }
 }
 
@@ -148,16 +160,20 @@ void layerStackUI::updateDisplayedLayer(int x, int y, int r, int g, int b)
     m_Painter->drawPoint(x,y);
     m_Painter->end();
     resizeEvent(NULL);
+}
 
+void layerStackUI::saveInHistory(int x, int y, int r, int g, int b)
+{
     /* Compute delta */
     Pixel previousPixel = m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getPixel(x, y);
     unsigned char previousTransparency = m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getTransparency(x, y);
 
+//TODO do that comme du monde
     PixelData delta;
-    delta.deltaPixelRed= previousPixel.red - r;
-    delta.deltaPixelGreen = previousPixel.green - g;
-    delta.deltaPixelBlue = previousPixel.blue - b;
-    delta.deltaTransparency = previousTransparency - 255;
+    delta.deltaPixelRed= r;
+    delta.deltaPixelGreen = g;
+    delta.deltaPixelBlue = b;
+    delta.deltaTransparency = 255;
 
     delta.x = x;
     delta.y = y;
@@ -200,15 +216,28 @@ void layerStackUI::historyUndoCall(LocalHistory *history)
         QList<PixelData> delta = historyPtr->getDelta();
 
         for(int i = 0; i < delta.size(); i++){
-            //UNDO
             PixelData pixelData = delta.at(i);
-            int newTransparency = m_LayerStack->getLayer(pixelData.z)->getTransparency(pixelData.x, pixelData.y)
-                    + pixelData.deltaTransparency;
+
+            // Compute old values with delta
+            int oldTransparency = m_LayerStack->getLayer(pixelData.z)->getTransparency(pixelData.x, pixelData.y)
+                    - pixelData.deltaTransparency;
+            int oldRed = m_LayerStack->getLayer(pixelData.z)->getPixel(pixelData.x, pixelData.y).red
+                    - pixelData.deltaPixelRed;
+            int oldGreen = m_LayerStack->getLayer(pixelData.z)->getPixel(pixelData.x, pixelData.y).green
+                    - pixelData.deltaPixelGreen;
+            int oldBlue = m_LayerStack->getLayer(pixelData.z)->getPixel(pixelData.x, pixelData.y).blue
+                    - pixelData.deltaPixelBlue;
+
             m_LayerStack->getLayer(pixelData.z)->setPixelTransparent(pixelData.x,
                                                                      pixelData.y,
-                                                                     (unsigned char)newTransparency);
-            cout << pixelData.x << endl;
+                                                                     (unsigned char)oldTransparency);
+            m_LayerStack->getLayer(pixelData.z)->writePixel(pixelData.x,
+                                                     pixelData.y,
+                                                     (unsigned char)oldRed,
+                                                     (unsigned char)oldGreen,
+                                                     (unsigned char)oldBlue);
         }
+        currentLayerChanged();
     }
 }
 
@@ -218,8 +247,27 @@ void layerStackUI::historyRedoCall(LocalHistory *history)
         LayerStackUIHistory *historyPtr = (LayerStackUIHistory*)history;
         QList<PixelData> delta = historyPtr->getDelta();
         for(int i = 0; i < delta.size(); i++){
-            //REDO
-            //TODO
+            PixelData pixelData = delta.at(i);
+
+            // Compute old values with delta
+            int oldTransparency = m_LayerStack->getLayer(pixelData.z)->getTransparency(pixelData.x, pixelData.y)
+                    + pixelData.deltaTransparency;
+            int oldRed = m_LayerStack->getLayer(pixelData.z)->getPixel(pixelData.x, pixelData.y).red
+                    + pixelData.deltaPixelRed;
+            int oldGreen = m_LayerStack->getLayer(pixelData.z)->getPixel(pixelData.x, pixelData.y).green
+                    + pixelData.deltaPixelGreen;
+            int oldBlue = m_LayerStack->getLayer(pixelData.z)->getPixel(pixelData.x, pixelData.y).blue
+                    + pixelData.deltaPixelBlue;
+
+            m_LayerStack->getLayer(pixelData.z)->setPixelTransparent(pixelData.x,
+                                                                     pixelData.y,
+                                                                     (unsigned char)oldTransparency);
+            m_LayerStack->getLayer(pixelData.z)->writePixel(pixelData.x,
+                                                     pixelData.y,
+                                                     (unsigned char)oldRed,
+                                                     (unsigned char)oldGreen,
+                                                     (unsigned char)oldBlue);
         }
+        currentLayerChanged();
     }
 }

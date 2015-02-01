@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionRedo->setDisabled(true);
 
     /* History */
-    m_History = new History(4); //Debug only!!! => should be around 50
+    m_History = new History(50);
     m_EditingWidget->setHistoryReference(m_History);
     //Insert all other element that needs to be connected to history here
 
