@@ -54,8 +54,14 @@ void layerStackUI::mousePressEvent(QMouseEvent *event)
 
     /***************************************************************
      * Draw on Layer
-     * Warning: update must be called before write pixel for history
+     * Warning: history must be called before write pixel for update
      ***************************************************************/
+    saveInHistory(event->x()*m_dPixelToPixelFactor,
+                  event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
+                  m_iRed,
+                  m_iGreen,
+                  m_iBlue);
+
     updateDisplayedLayer(event->x()*m_dPixelToPixelFactor,
                          event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
                          m_iRed,
@@ -67,12 +73,6 @@ void layerStackUI::mousePressEvent(QMouseEvent *event)
                                              m_iRed,
                                              m_iGreen,
                                              m_iBlue);
-
-    saveInHistory(event->x()*m_dPixelToPixelFactor,
-                  event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
-                  m_iRed,
-                  m_iGreen,
-                  m_iBlue);
 }
 
 void layerStackUI::mouseReleaseEvent(QMouseEvent*)
@@ -93,8 +93,14 @@ void layerStackUI::mouseMoveEvent(QMouseEvent *event)
 
         /***************************************************************
          * Draw on Layer
-         * Warning: update must be called before write pixel for history
+         * Warning: history must be called before write pixel for update
          ***************************************************************/
+        saveInHistory(event->x()*m_dPixelToPixelFactor,
+                      event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
+                      m_iRed,
+                      m_iGreen,
+                      m_iBlue);
+
         updateDisplayedLayer(event->x()*m_dPixelToPixelFactor,
                              event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
                              m_iRed,
@@ -106,12 +112,6 @@ void layerStackUI::mouseMoveEvent(QMouseEvent *event)
                                                  m_iRed,
                                                  m_iGreen,
                                                  m_iBlue);
-
-        saveInHistory(event->x()*m_dPixelToPixelFactor,
-                      event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
-                      m_iRed,
-                      m_iGreen,
-                      m_iBlue);
     }
 }
 
@@ -182,12 +182,11 @@ void layerStackUI::saveInHistory(int x, int y, int r, int g, int b)
     Pixel previousPixel = m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getPixel(x, y);
     unsigned char previousTransparency = m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getTransparency(x, y);
 
-//TODO do that comme du monde
     PixelData delta;
-    delta.deltaPixelRed= r;
-    delta.deltaPixelGreen = g;
-    delta.deltaPixelBlue = b;
-    delta.deltaTransparency = 255;
+    delta.deltaPixelRed= r - (int)previousPixel.red;
+    delta.deltaPixelGreen = g - (int)previousPixel.green;
+    delta.deltaPixelBlue = b - (int)previousPixel.blue;
+    delta.deltaTransparency = 255 - (int)previousTransparency;
 
     delta.x = x;
     delta.y = y;
