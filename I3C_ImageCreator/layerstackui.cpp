@@ -12,7 +12,11 @@ layerStackUI::layerStackUI(QWidget *parent, LayerStack* layerStack) :
     m_iRed = 0;
     m_iGreen = 0;
     m_iBlue = 0;
+    m_BrushType = Pen;
     m_iBrushSize = 1;
+
+    m_iLastX = -1;
+    m_iLastY = -1;
 }
 
 layerStackUI::~layerStackUI()
@@ -52,32 +56,21 @@ void layerStackUI::mousePressEvent(QMouseEvent *event)
     m_bMouseButtonDwn = true;
     //TODO: Condition is in drawable widget
 
-    /***************************************************************
-     * Draw on Layer
-     * Warning: history must be called before write pixel for update
-     ***************************************************************/
-    saveInHistory(event->x()*m_dPixelToPixelFactor,
-                  event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
-                  m_iRed,
-                  m_iGreen,
-                  m_iBlue);
-
-    updateDisplayedLayer(event->x()*m_dPixelToPixelFactor,
-                         event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
-                         m_iRed,
-                         m_iGreen,
-                         m_iBlue);
-
-    m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(event->x()*m_dPixelToPixelFactor,
-                                             event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
-                                             m_iRed,
-                                             m_iGreen,
-                                             m_iBlue);
+    if(m_BrushType == Eraser){
+        erase(event->x()*m_dPixelToPixelFactor,
+              event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection);
+    }
+    else if(m_BrushType ==Pen){
+        draw(event->x()*m_dPixelToPixelFactor,
+             event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection);
+    }
 }
 
 void layerStackUI::mouseReleaseEvent(QMouseEvent*)
 {
     m_bMouseButtonDwn = false;
+    m_iLastX = -1;
+    m_iLastY = -1;
 
     /* Manage History */
     LayerStackUIHistory *historyElement = new LayerStackUIHistory();
@@ -91,27 +84,14 @@ void layerStackUI::mouseMoveEvent(QMouseEvent *event)
     if(m_bMouseButtonDwn){
         //TODO: Condition is in drawable widget
 
-        /***************************************************************
-         * Draw on Layer
-         * Warning: history must be called before write pixel for update
-         ***************************************************************/
-        saveInHistory(event->x()*m_dPixelToPixelFactor,
-                      event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
-                      m_iRed,
-                      m_iGreen,
-                      m_iBlue);
-
-        updateDisplayedLayer(event->x()*m_dPixelToPixelFactor,
-                             event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
-                             m_iRed,
-                             m_iGreen,
-                             m_iBlue);
-
-        m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(event->x()*m_dPixelToPixelFactor,
-                                                 event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection,
-                                                 m_iRed,
-                                                 m_iGreen,
-                                                 m_iBlue);
+        if(m_BrushType == Eraser){
+            erase(event->x()*m_dPixelToPixelFactor,
+                  event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection);
+        }
+        else if(m_BrushType ==Pen){
+            draw(event->x()*m_dPixelToPixelFactor,
+                 event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection);
+        }
     }
 }
 
@@ -156,24 +136,87 @@ void layerStackUI::setActiveColor(int red, int green, int blue)
 void layerStackUI::setEraserSelected(int eraserSize)
 {
     m_iBrushSize = eraserSize;
-    //TODO
-    cout << "Eraser" << endl;
+    m_BrushType = Eraser;
 }
 
 void layerStackUI::setPenSelected(int penSize)
 {
     m_iBrushSize = penSize;
-    //TODO
-    cout << "Pen" << endl;
+    m_BrushType = Pen;
+}
+
+void layerStackUI::draw(int x, int y)
+{
+    if(x != m_iLastX || y != m_iLastY){
+        /****************************************************
+         * Draw on Layer
+         * Warning: history must be called before write pixel
+         ****************************************************/
+        int iHalfBrushSize = m_iBrushSize/2;
+        int xMinHalfBrush = x - iHalfBrushSize;
+        int yMinHalfBrush = y - iHalfBrushSize;
+
+        for(int i = 0; i < m_iBrushSize; i++){
+            for(int j = 0; j < m_iBrushSize; j++){
+                int currentPixelX = xMinHalfBrush + i;
+                int currentPixelY = yMinHalfBrush + j;
+
+                saveInHistory(currentPixelX , currentPixelY, m_iRed, m_iGreen, m_iBlue);
+
+                updateDisplayedLayer(currentPixelX, currentPixelY, m_iRed, m_iGreen, m_iBlue);
+
+                m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(currentPixelX,
+                                                                       currentPixelY,
+                                                                       m_iRed,
+                                                                       m_iGreen,
+                                                                       m_iBlue);
+            }
+        }
+
+        m_iLastX = x;
+        m_iLastY = y;
+
+        currentLayerChanged();
+    }
+}
+
+void layerStackUI::erase(int x, int y)
+{
+    if(x != m_iLastX || y != m_iLastY){
+        /****************************************************
+         * Erase part of Layer
+         * Warning: history must be called before erase pixel
+         ****************************************************/
+        int iHalfBrushSize = m_iBrushSize/2;
+        int xMinHalfBrush = x - iHalfBrushSize;
+        int yMinHalfBrush = y - iHalfBrushSize;
+
+        for(int i = 0; i < m_iBrushSize; i++){
+            for(int j = 0; j < m_iBrushSize; j++){
+                int currentPixelX = xMinHalfBrush + i;
+                int currentPixelY = yMinHalfBrush + j;
+
+                saveInHistory(currentPixelX, currentPixelY, 0);
+
+                m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->setPixelTransparent(currentPixelX,
+                                                                              currentPixelY,
+                                                                              0);
+            }
+        }
+
+        m_iLastX = x;
+        m_iLastY = y;
+
+        currentLayerChanged();
+    }
 }
 
 void layerStackUI::updateDisplayedLayer(int x, int y, int r, int g, int b)
 {
     m_Painter->begin(m_frame);
-    m_Painter->setPen(QPen(QBrush(QColor(r, g, b)),m_iBrushSize));
+    m_Painter->setPen(QPen(QBrush(QColor(r, g, b)), 1));
     m_Painter->drawPoint(x,y);
     m_Painter->end();
-    resizeEvent(NULL);
 }
 
 void layerStackUI::saveInHistory(int x, int y, int r, int g, int b)
@@ -187,6 +230,24 @@ void layerStackUI::saveInHistory(int x, int y, int r, int g, int b)
     delta.deltaPixelGreen = g - (int)previousPixel.green;
     delta.deltaPixelBlue = b - (int)previousPixel.blue;
     delta.deltaTransparency = 255 - (int)previousTransparency;
+
+    delta.x = x;
+    delta.y = y;
+    delta.z = m_LayerStack->getCurrentLayer();
+
+    historyData.append(delta);
+}
+
+void layerStackUI::saveInHistory(int x, int y, int transparency)
+{
+    /* Compute delta */
+    unsigned char previousTransparency = m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getTransparency(x, y);
+
+    PixelData delta;
+    delta.deltaPixelRed= 0;
+    delta.deltaPixelGreen = 0;
+    delta.deltaPixelBlue = 0;
+    delta.deltaTransparency = transparency - (int)previousTransparency;
 
     delta.x = x;
     delta.y = y;
@@ -212,11 +273,17 @@ void layerStackUI::putLayerInPixmap(Layer *layer, QPixmap *pixmap)
 
     for(int x = 0; x < sideSize; x++){
         for(int y = 0; y < sideSize; y++){
-            bufPixel = layer->getPixel(x, y);
-            m_Painter->setPen(QPen(QBrush(QColor(bufPixel.red,
-                                                 bufPixel.green,
-                                                 bufPixel.blue)),1));
-            m_Painter->drawPoint(x,y);
+            if(layer->getTransparency(x,y) == 255){
+                bufPixel = layer->getPixel(x, y);
+                m_Painter->setPen(QPen(QBrush(QColor(bufPixel.red,
+                                                     bufPixel.green,
+                                                     bufPixel.blue)),1));
+                m_Painter->drawPoint(x,y);
+            }
+            else{
+                m_Painter->setPen(QPen(QBrush(QColor(0,0,0)),1));
+                m_Painter->drawPoint(x,y);
+            }
         }
     }
     m_Painter->end();
@@ -263,7 +330,7 @@ void layerStackUI::historyRedoCall(LocalHistory *history)
             PixelData pixelData = delta.at(i);
 
             // Compute old values with delta
-            int oldTransparency = m_LayerStack->getLayer(pixelData.z)->getTransparency(pixelData.x, pixelData.y)
+            int oldTransparency = (int)m_LayerStack->getLayer(pixelData.z)->getTransparency(pixelData.x, pixelData.y)
                     + pixelData.deltaTransparency;
             int oldRed = m_LayerStack->getLayer(pixelData.z)->getPixel(pixelData.x, pixelData.y).red
                     + pixelData.deltaPixelRed;

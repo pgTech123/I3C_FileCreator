@@ -49,4 +49,5 @@ HEADERS += \
     history.h \
     localhistory.h \
     layerstackuihistory.h \
-    brushwidget.h
+    brushwidget.h \
+    BrushType.h

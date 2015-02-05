@@ -38,14 +38,12 @@
      <height>27</height>
     </rect>
    </property>
-   <property name="currentIndex">
-    <number>6</number>
+   <property name="currentText">
+    <string>128</string>
    </property>
-   <item>
-    <property name="text">
-     <string>2</string>
-    </property>
-   </item>
+   <property name="currentIndex">
+    <number>5</number>
+   </property>
    <item>
     <property name="text">
      <string>4</string>
@@ -79,16 +77,6 @@
    <item>
     <property name="text">
      <string>256</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>512</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>1024</string>
     </property>
    </item>
   </widget>

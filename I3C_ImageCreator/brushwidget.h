@@ -3,10 +3,7 @@
 
 #include <QDockWidget>
 #include <QCloseEvent>
-
-enum BrushType{
-    Pen, Eraser
-};
+#include "BrushType.h"
 
 namespace Ui {
 class BrushWidget;

@@ -8,6 +8,7 @@
 #include <QResizeEvent>
 #include "layerstack.h"
 #include "layerstackuihistory.h"
+#include "BrushType.h"
 
 //DEBUG PURPOSE
 #include <iostream>
@@ -31,8 +32,12 @@ public:
     void currentLayerChanged();
 
 private:
+    void draw(int x, int y);
+    void erase(int x, int y);
+
     void updateDisplayedLayer(int x, int y, int r, int g, int b);
     void saveInHistory(int x, int y, int r, int g, int b);
+    void saveInHistory(int x, int y, int transparency);
     void addPixmapInTransparency(QPixmap *layer);
 
     void putLayerInPixmap(Layer *layer, QPixmap *pixmap);
@@ -66,10 +71,15 @@ private:
     QPainter *m_Painter;
     int m_iOffsetCorrection;
 
+    /* Last State */
+    int m_iLastX;
+    int m_iLastY;
+
     /* Drawing */
     int m_iRed;
     int m_iGreen;
     int m_iBlue;
+    BrushType m_BrushType;
     int m_iBrushSize;
 
     /* History */
