@@ -27,7 +27,7 @@ layerStackUI::~layerStackUI()
     delete m_Painter;
 }
 
-void layerStackUI::resizeEvent(QResizeEvent* ev)
+void layerStackUI::resizeEvent(QResizeEvent*)
 {
     if(m_LayerStack->isSideSizeSet()){
         /* x 0.8 to be able to size down */
@@ -172,15 +172,21 @@ void layerStackUI::draw(int x, int y)
                 int currentPixelX = xMinHalfBrush + i;
                 int currentPixelY = yMinHalfBrush + j;
 
-                saveInHistory(currentPixelX , currentPixelY, m_iRed, m_iGreen, m_iBlue);
+                if(currentPixelX >= 0 &&
+                   currentPixelY >= 0 &&
+                   currentPixelX < m_LayerStack->getLayer(0)->getSideSize() &&
+                   currentPixelY < m_LayerStack->getLayer(0)->getSideSize())
+                {
+                    saveInHistory(currentPixelX , currentPixelY, m_iRed, m_iGreen, m_iBlue);
 
-                updateDisplayedLayer(currentPixelX, currentPixelY, m_iRed, m_iGreen, m_iBlue);
+                    updateDisplayedLayer(currentPixelX, currentPixelY, m_iRed, m_iGreen, m_iBlue);
 
-                m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(currentPixelX,
-                                                                       currentPixelY,
-                                                                       m_iRed,
-                                                                       m_iGreen,
-                                                                       m_iBlue);
+                    m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(currentPixelX,
+                                                                           currentPixelY,
+                                                                           m_iRed,
+                                                                           m_iGreen,
+                                                                           m_iBlue);
+                }
             }
         }
 
@@ -240,7 +246,12 @@ void layerStackUI::saveInHistory(int x, int y, int r, int g, int b)
     delta.deltaPixelRed= r - (int)previousPixel.red;
     delta.deltaPixelGreen = g - (int)previousPixel.green;
     delta.deltaPixelBlue = b - (int)previousPixel.blue;
-    delta.deltaTransparency = 255 - (int)previousTransparency;
+    if(m_BrushType == Eraser){
+        delta.deltaTransparency = 0 - (int)previousTransparency;
+    }
+    else if(m_BrushType == Pen){
+        delta.deltaTransparency = 255 - (int)previousTransparency;
+    }
 
     delta.x = x;
     delta.y = y;
@@ -353,6 +364,7 @@ void layerStackUI::historyRedoCall(LocalHistory *history)
             m_LayerStack->getLayer(pixelData.z)->setPixelTransparent(pixelData.x,
                                                                      pixelData.y,
                                                                      (unsigned char)oldTransparency);
+
             m_LayerStack->getLayer(pixelData.z)->writePixel(pixelData.x,
                                                      pixelData.y,
                                                      (unsigned char)oldRed,
