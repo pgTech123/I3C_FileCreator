@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QString>
+#include <QDesktopWidget>
 
 #include "newimagedialog.h"
 #include "editingwidget.h"

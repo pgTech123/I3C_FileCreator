@@ -229,7 +229,15 @@ void MainWindow::on_actionBrush_Window_triggered()
 /* Menu Help */
 void MainWindow::on_actionAbout_Us_triggered()
 {
+    m_AboutUsWindow->setGeometry(
+        QStyle::alignedRect(
+            Qt::LeftToRight,
+            Qt::AlignCenter,
+            m_AboutUsWindow->size(),
+            qApp->desktop()->availableGeometry()
+        ));
     m_AboutUsWindow->show();
+    m_AboutUsWindow->activateWindow();
 }
 
 

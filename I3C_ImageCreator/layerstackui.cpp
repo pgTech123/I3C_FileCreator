@@ -142,6 +142,7 @@ void layerStackUI::setActiveColor(int red, int green, int blue)
     m_iRed = red;
     m_iGreen = green;
     m_iBlue = blue;
+    m_BrushType = Pen;
 }
 
 void layerStackUI::setEraserSelected(int eraserSize)
