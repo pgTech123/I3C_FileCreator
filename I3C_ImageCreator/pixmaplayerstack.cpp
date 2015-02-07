@@ -15,6 +15,7 @@ PixmapLayerStack::PixmapLayerStack(QWidget *parent):
 
 PixmapLayerStack::~PixmapLayerStack()
 {
+    delete m_qlabelUI;
 }
 
 layerStackUI* PixmapLayerStack::getUIQLabel()

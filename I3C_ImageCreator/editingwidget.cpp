@@ -169,7 +169,8 @@ void EditingWidget::initDisplayLayerStack()
 {
     if(m_PixmapLayerStack != NULL){
         /* Show */
-        ui->gridLayout->addWidget(m_PixmapLayerStack->getUIQLabel(),1,1);
+        m_PixmapLayerStack->getUIQLabel()->setAlignment(Qt::AlignCenter);
+        ui->gridLayout->addWidget(m_PixmapLayerStack->getUIQLabel(),1,2);
 
         /* Enable Control Buttons */
         ui->pushButtonPrevious->setEnabled(true);

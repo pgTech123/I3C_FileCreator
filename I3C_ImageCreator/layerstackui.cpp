@@ -1,6 +1,6 @@
 #include "layerstackui.h"
 
-layerStackUI::layerStackUI(QWidget *parent, LayerStack* layerStack) :
+layerStackUI::layerStackUI(QWidget* parent, LayerStack* layerStack):
     QLabel(parent)
 {
     m_LayerStack = layerStack;
@@ -27,7 +27,7 @@ layerStackUI::~layerStackUI()
     delete m_Painter;
 }
 
-void layerStackUI::resizeEvent(QResizeEvent*)
+void layerStackUI::resizeEvent(QResizeEvent* ev)
 {
     if(m_LayerStack->isSideSizeSet()){
         /* x 0.8 to be able to size down */
@@ -40,13 +40,19 @@ void layerStackUI::resizeEvent(QResizeEvent*)
 
             /* Adjust scale factor between real size of 1 pixel and the size of 1 pix displayed */
             m_dPixelToPixelFactor = (double)m_LayerStack->getSideSize() / (double)m_PixmapScaled.width();
-            m_iOffsetCorrection = m_PixmapScaled.width() * 0.125 * m_dPixelToPixelFactor;
         }
         else{
             m_PixmapScaled = m_frame->scaled(m_PixmapScaled.width(), m_PixmapScaled.height(), Qt::KeepAspectRatio);
             m_dPixelToPixelFactor = 1;
-            m_iOffsetCorrection = 0;
         }
+
+        int xOffset = (this->width() - m_PixmapScaled.width()) / 2;
+        int yOffset = (this->height() - m_PixmapScaled.height()) / 2;
+        m_RectDrawable.setX(xOffset);
+        m_RectDrawable.setY(yOffset);
+        m_RectDrawable.setWidth(m_PixmapScaled.width());
+        m_RectDrawable.setHeight(m_PixmapScaled.height());
+
         QLabel::setPixmap(m_PixmapScaled);
     }
 }
@@ -54,16 +60,7 @@ void layerStackUI::resizeEvent(QResizeEvent*)
 void layerStackUI::mousePressEvent(QMouseEvent *event)
 {
     m_bMouseButtonDwn = true;
-    //TODO: Condition is in drawable widget
-
-    if(m_BrushType == Eraser){
-        erase(event->x()*m_dPixelToPixelFactor,
-              event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection);
-    }
-    else if(m_BrushType ==Pen){
-        draw(event->x()*m_dPixelToPixelFactor,
-             event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection);
-    }
+    eventEditImageTriggered(event->x(), event->y());
 }
 
 void layerStackUI::mouseReleaseEvent(QMouseEvent*)
@@ -82,15 +79,29 @@ void layerStackUI::mouseReleaseEvent(QMouseEvent*)
 void layerStackUI::mouseMoveEvent(QMouseEvent *event)
 {
     if(m_bMouseButtonDwn){
-        //TODO: Condition is in drawable widget
+        eventEditImageTriggered(event->x(), event->y());
+    }
+}
 
+void layerStackUI::eventEditImageTriggered(int x, int y)
+{
+    /* Correct Offset */
+    x = x - m_RectDrawable.x();
+    y = y - m_RectDrawable.y();
+
+    /* Check Image Boundary */
+    if(0 < x && x < m_RectDrawable.width() &&
+       0 < y && y < m_RectDrawable.height()){
+
+        x = x * m_dPixelToPixelFactor;
+        y = y * m_dPixelToPixelFactor;
+
+        /* Edit */
         if(m_BrushType == Eraser){
-            erase(event->x()*m_dPixelToPixelFactor,
-                  event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection);
+            erase(x, y);
         }
         else if(m_BrushType ==Pen){
-            draw(event->x()*m_dPixelToPixelFactor,
-                 event->y()*m_dPixelToPixelFactor-m_iOffsetCorrection);
+            draw(x, y);
         }
     }
 }

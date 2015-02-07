@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QResizeEvent>
+#include <QRect>
 #include "layerstack.h"
 #include "layerstackuihistory.h"
 #include "BrushType.h"
@@ -32,6 +33,8 @@ public:
     void currentLayerChanged();
 
 private:
+    void eventEditImageTriggered(int x, int y);
+
     void draw(int x, int y);
     void erase(int x, int y);
 
@@ -63,13 +66,13 @@ private:
     bool m_bMouseButtonDwn;
 
     /* Status */
+    QRect m_RectDrawable;
     double m_dPixelToPixelFactor;
 
     /* Layers */
     QPixmap *m_frame;
     QPixmap m_PixmapScaled;
     QPainter *m_Painter;
-    int m_iOffsetCorrection;
 
     /* Last State */
     int m_iLastX;

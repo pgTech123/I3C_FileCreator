@@ -8,6 +8,9 @@
 #include "image.h"
 #include "pixmaplayerstack.h"
 
+#include "iostream"
+using namespace std;
+
 namespace Ui {
 class EditingWidget;
 }
