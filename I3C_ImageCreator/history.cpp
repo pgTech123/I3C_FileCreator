@@ -18,13 +18,7 @@ History::History(int historyLenght)
 
 History::~History()
 {
-    for(int i = 0; i < m_iHistoryLenght; i++){
-        if(m_HistoryArray[i] != NULL){
-            delete m_HistoryArray[i];
-        }
-    }
-
-    delete[] m_HistoryArray;
+    deleteHistory();
 }
 
 void History::initHistory(int historyLenght)
@@ -59,6 +53,17 @@ int History::decrementCursor(int cursor)
     else{
         return cursor + m_iHistoryLenght;
     }
+}
+
+void History::deleteHistory()
+{
+    for(int i = 0; i < m_iHistoryLenght; i++){
+        if(m_HistoryArray[i] != NULL){
+            delete m_HistoryArray[i];
+        }
+    }
+
+    delete[] m_HistoryArray;
 }
 
 void History::appendHistoryElement(LocalHistory *element)
@@ -122,4 +127,10 @@ void History::updateButtonStatus()
     else{
         emit enableRedoButton(true);
     }
+}
+
+void History::clearHistory()
+{
+    deleteHistory();
+    initHistory(m_iHistoryLenght);
 }

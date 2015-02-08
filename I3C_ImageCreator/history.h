@@ -26,11 +26,6 @@
  * delete it. This class(History) does this job.
  * **************************************************************/
 
-/* *****************************************************
- * Warning: Known bug. When there is only one element
- * in history, it can be undone but cannot be redone.
- * *****************************************************/
-
 class History: public QObject
 {
     Q_OBJECT
@@ -44,6 +39,8 @@ private:
     int incrementCursor(int cursor);
     int decrementCursor(int cursor);
 
+    void deleteHistory();
+
 public slots:
     void undo();
     void redo();
@@ -52,6 +49,8 @@ public slots:
     void appendHistoryElementSilently(LocalHistory *element);
 
     void updateButtonStatus();
+
+    void clearHistory();
 
 signals:
     void newElementInHistory();

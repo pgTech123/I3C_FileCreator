@@ -22,6 +22,8 @@ EditingWidget::~EditingWidget()
 void EditingWidget::instanciateImageAndLS()
 {
     deleteImageAndLS();
+    m_History->clearHistory();
+
     m_Image = new Image();
     m_PixmapLayerStack = new PixmapLayerStack(this);
 
