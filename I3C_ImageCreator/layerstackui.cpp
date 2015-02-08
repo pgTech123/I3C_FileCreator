@@ -217,16 +217,22 @@ void layerStackUI::erase(int x, int y)
                 int currentPixelX = xMinHalfBrush + i;
                 int currentPixelY = yMinHalfBrush + j;
 
-                saveInHistory(currentPixelX, currentPixelY, 0, 0, 0, 0);
+                if(currentPixelX >= 0 &&
+                   currentPixelY >= 0 &&
+                   currentPixelX < m_LayerStack->getLayer(0)->getSideSize() &&
+                   currentPixelY < m_LayerStack->getLayer(0)->getSideSize())
+                {
+                    saveInHistory(currentPixelX, currentPixelY, 0, 0, 0, 0);
 
-                m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(currentPixelX,
-                                                                       currentPixelY,
-                                                                       0,
-                                                                       0,
-                                                                       0);
-                m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->setPixelTransparent(currentPixelX,
-                                                                              currentPixelY,
-                                                                              0);
+                    m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(currentPixelX,
+                                                                           currentPixelY,
+                                                                           0,
+                                                                           0,
+                                                                           0);
+                    m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->setPixelTransparent(currentPixelX,
+                                                                                  currentPixelY,
+                                                                                  0);
+                }
             }
         }
 
