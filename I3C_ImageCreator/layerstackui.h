@@ -39,8 +39,7 @@ private:
     void erase(int x, int y);
 
     void updateDisplayedLayer(int x, int y, int r, int g, int b);
-    void saveInHistory(int x, int y, int r, int g, int b);
-    void saveInHistory(int x, int y, int transparency);
+    void saveInHistory(int x, int y, int r, int g, int b, int a = 255);
     void addPixmapInTransparency(QPixmap *layer);
 
     void putLayerInPixmap(Layer *layer, QPixmap *pixmap);

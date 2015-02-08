@@ -25,6 +25,15 @@ Layer::~Layer()
 
 void Layer::setSideSize(int sideSize)
 {
+    if(m_PixelMap != NULL){
+        delete[] m_PixelMap;
+        m_PixelMap = NULL;
+    }
+    if(m_transparencyMap != NULL){
+        delete[] m_transparencyMap;
+        m_transparencyMap = NULL;
+    }
+
     m_iSideSize = sideSize;
     m_PixelMap = new Pixel[m_iSideSize * m_iSideSize];
     m_transparencyMap = new unsigned char[m_iSideSize*m_iSideSize];

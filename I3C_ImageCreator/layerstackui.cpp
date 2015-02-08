@@ -46,6 +46,7 @@ void layerStackUI::resizeEvent(QResizeEvent*)
             m_dPixelToPixelFactor = 1;
         }
 
+        /* Correction for position */
         int xOffset = (this->width() - m_PixmapScaled.width()) / 2;
         int yOffset = (this->height() - m_PixmapScaled.height()) / 2;
         m_RectDrawable.setX(xOffset);
@@ -113,6 +114,10 @@ void layerStackUI::layerStackCreated(int sideSize)
         delete m_frame;
     }
     m_frame = new QPixmap(sideSize,sideSize);
+
+    /* Save empty in history */
+    mouseReleaseEvent(NULL);
+
     emit initLayerStackDisplay();
 }
 
@@ -180,8 +185,6 @@ void layerStackUI::draw(int x, int y)
                 {
                     saveInHistory(currentPixelX , currentPixelY, m_iRed, m_iGreen, m_iBlue);
 
-                    updateDisplayedLayer(currentPixelX, currentPixelY, m_iRed, m_iGreen, m_iBlue);
-
                     m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(currentPixelX,
                                                                            currentPixelY,
                                                                            m_iRed,
@@ -214,8 +217,13 @@ void layerStackUI::erase(int x, int y)
                 int currentPixelX = xMinHalfBrush + i;
                 int currentPixelY = yMinHalfBrush + j;
 
-                saveInHistory(currentPixelX, currentPixelY, 0);
+                saveInHistory(currentPixelX, currentPixelY, 0, 0, 0, 0);
 
+                m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->writePixel(currentPixelX,
+                                                                       currentPixelY,
+                                                                       0,
+                                                                       0,
+                                                                       0);
                 m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->setPixelTransparent(currentPixelX,
                                                                               currentPixelY,
                                                                               0);
@@ -237,7 +245,7 @@ void layerStackUI::updateDisplayedLayer(int x, int y, int r, int g, int b)
     m_Painter->end();
 }
 
-void layerStackUI::saveInHistory(int x, int y, int r, int g, int b)
+void layerStackUI::saveInHistory(int x, int y, int r, int g, int b, int a)
 {
     /* Compute delta */
     Pixel previousPixel = m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getPixel(x, y);
@@ -247,30 +255,7 @@ void layerStackUI::saveInHistory(int x, int y, int r, int g, int b)
     delta.deltaPixelRed= r - (int)previousPixel.red;
     delta.deltaPixelGreen = g - (int)previousPixel.green;
     delta.deltaPixelBlue = b - (int)previousPixel.blue;
-    if(m_BrushType == Eraser){
-        delta.deltaTransparency = 0 - (int)previousTransparency;
-    }
-    else if(m_BrushType == Pen){
-        delta.deltaTransparency = 255 - (int)previousTransparency;
-    }
-
-    delta.x = x;
-    delta.y = y;
-    delta.z = m_LayerStack->getCurrentLayer();
-
-    historyData.append(delta);
-}
-
-void layerStackUI::saveInHistory(int x, int y, int transparency)
-{
-    /* Compute delta */
-    unsigned char previousTransparency = m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getTransparency(x, y);
-
-    PixelData delta;
-    delta.deltaPixelRed= 0;
-    delta.deltaPixelGreen = 0;
-    delta.deltaPixelBlue = 0;
-    delta.deltaTransparency = transparency - (int)previousTransparency;
+    delta.deltaTransparency = a - (int)previousTransparency;
 
     delta.x = x;
     delta.y = y;
