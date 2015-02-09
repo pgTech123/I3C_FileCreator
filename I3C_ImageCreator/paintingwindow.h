@@ -56,6 +56,7 @@ private slots:
 signals:
     void hidden();
     void selectedColor(int r, int g, int b);
+    void selectedColor();
 
 private:
     Ui::PaintingWindow *ui;

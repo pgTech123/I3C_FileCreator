@@ -24,6 +24,11 @@ void BrushWidget::closeEvent(QCloseEvent *closeEvent)
     emit hidden();
 }
 
+void BrushWidget::selectBrush()
+{
+    on_pushButtonBrush_clicked();
+}
+
 void BrushWidget::on_pushButtonBrush_clicked()
 {
     m_SelectedBrush = Pen;

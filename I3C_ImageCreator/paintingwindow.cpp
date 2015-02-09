@@ -57,6 +57,7 @@ void PaintingWindow::emitSelectedColor()
     int b = m_ColorPads[m_iColorPadSelected].getBlue();
 
     emit selectedColor(r,g,b);
+    emit selectedColor();
 }
 
 void PaintingWindow::setPresetColors()
@@ -101,6 +102,7 @@ void PaintingWindow::selectedPad(int r, int g, int b, int id)
     ui->spinBoxBlue->setValue(b);
 
     emit selectedColor(r,g,b);
+    emit selectedColor();
 }
 
 void PaintingWindow::on_spinBoxRed_valueChanged(int value)

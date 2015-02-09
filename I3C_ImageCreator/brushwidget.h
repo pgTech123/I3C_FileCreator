@@ -18,6 +18,9 @@ public:
     ~BrushWidget();
     void closeEvent(QCloseEvent *closeEvent);
 
+public slots:
+    void selectBrush();
+
 private slots:
     void on_pushButtonBrush_clicked();
     void on_pushButtonEraser_clicked();
