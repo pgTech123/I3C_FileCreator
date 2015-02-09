@@ -38,7 +38,6 @@ public:
     int getGreen();
     int getBlue();
 
-
 private:
     void drawSelectedContour();
 
@@ -47,6 +46,7 @@ public slots:
     void setGreen(int value);
     void setBlue(int value);
 
+    void select();
     void unselect();
 
 signals:
@@ -54,6 +54,7 @@ signals:
 
 private:
     int m_iId;
+    bool m_bSelected;
 
     int m_red;
     int m_green;

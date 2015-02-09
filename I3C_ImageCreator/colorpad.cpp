@@ -12,6 +12,7 @@ ColorPad::ColorPad(QWidget *parent):
     m_red = 0;
     m_green = 0;
     m_blue = 0;
+    m_bSelected = false;
 
     /* Init UI */
     m_PixmapColor = new QPixmap(8,8);
@@ -28,6 +29,7 @@ void ColorPad::mousePressEvent(QMouseEvent*)
 {
     /* Change UI (Blue Contour) */
     drawSelectedContour();
+    m_bSelected = true;
 
     emit ImSelected(m_red, m_green, m_blue, m_iId);
 }
@@ -39,8 +41,15 @@ void ColorPad::resizeEvent(QResizeEvent *event)
     int newWidth = event->size().width()*0.8;
 
     if(newWidth >= 8 && newHeight >= 8){
+        m_PixmapColor->fill(QColor(m_red, m_green, m_blue));
         (*m_PixmapColor) = m_PixmapColor->scaled(newWidth, newHeight);
-        QLabel::setPixmap(*m_PixmapColor);
+
+        if(m_bSelected){
+            drawSelectedContour();
+        }
+        else{
+            QLabel::setPixmap(*m_PixmapColor);
+        }
     }
 }
 
@@ -109,8 +118,15 @@ void ColorPad::setBlue(int value)
     emit ImSelected(m_red, m_green, m_blue, m_iId);
 }
 
+void ColorPad::select()
+{
+    m_bSelected = true;
+    drawSelectedContour();
+}
+
 void ColorPad::unselect()
 {
+    m_bSelected = false;
     /* Display only color */
     m_PixmapColor->fill(QColor(m_red, m_green, m_blue));
     QLabel::setPixmap(*m_PixmapColor);

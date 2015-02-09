@@ -51,6 +51,9 @@ private:
 
     void initDisplayLayerStack();
 
+signals:
+    void pingSelectedColor();
+
 private:
     Ui::EditingWidget *ui;
 

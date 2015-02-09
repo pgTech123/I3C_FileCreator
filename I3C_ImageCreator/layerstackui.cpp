@@ -97,7 +97,40 @@ void layerStackUI::eventEditImageTriggered(int x, int y)
         x = x * m_dPixelToPixelFactor;
         y = y * m_dPixelToPixelFactor;
 
-        /* Edit */
+        /* Patch for mouse speed */
+//        if(m_iLastX > 0 && m_iLastY > 0){
+//            int dx = m_iLastX - x;
+//            int dy = m_iLastY - y;
+
+//            /*Something to patch*/
+//            if(abs(dx) > 1 || abs(dy) >1){
+
+//                if(abs(dx) < abs(dy)){
+//                    double a = dx/dy;
+
+//                    for(int i = 0; i < dy; i++){
+//                        if(m_BrushType == Eraser){
+//                            erase(x1+a*i, y1+i);
+//                        }
+//                        else if(m_BrushType ==Pen){
+//                            draw(x1+a*i, y1+i);
+//                        }
+//                    }
+//                }
+//                else{
+//                    double a = dy/dx;
+//                    for(int i = 0; i < dx; i++){
+//                        if(m_BrushType == Eraser){
+//                            erase(x1+i, y1+a*i);
+//                        }
+//                        else if(m_BrushType ==Pen){
+//                            draw(x1+i, y1+a*i);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
         if(m_BrushType == Eraser){
             erase(x, y);
         }
@@ -113,6 +146,7 @@ void layerStackUI::layerStackCreated(int sideSize)
     if(m_frame != NULL){
         delete m_frame;
     }
+    m_iSideSize = sideSize;
     m_frame = new QPixmap(sideSize,sideSize);
 
     /* Save empty in history */
@@ -123,7 +157,7 @@ void layerStackUI::layerStackCreated(int sideSize)
 
 void layerStackUI::currentLayerChanged()
 {
-     putLayerInPixmap(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer()), m_frame);
+     m_frame->fill(Qt::black);
 
      /* Add adjacent layers in transparency */
      QPixmap *tmp = new QPixmap(m_LayerStack->getSideSize(), m_LayerStack->getSideSize());
@@ -136,6 +170,8 @@ void layerStackUI::currentLayerChanged()
          addPixmapInTransparency(tmp);
      }
      delete tmp;
+
+     updateDisplayedLayer();
 
      /* Resize and display */
      resizeEvent(NULL);
@@ -243,11 +279,19 @@ void layerStackUI::erase(int x, int y)
     }
 }
 
-void layerStackUI::updateDisplayedLayer(int x, int y, int r, int g, int b)
+void layerStackUI::updateDisplayedLayer()
 {
     m_Painter->begin(m_frame);
-    m_Painter->setPen(QPen(QBrush(QColor(r, g, b)), 1));
-    m_Painter->drawPoint(x,y);
+    for(int x = 0; x < m_iSideSize; x++){
+        for(int y = 0; y < m_iSideSize; y++){
+            if(m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getTransparency(x, y) != 0){
+                Pixel pixel = m_LayerStack->getLayer(m_LayerStack->getCurrentLayer())->getPixel(x, y);
+
+                m_Painter->setPen(QPen(QBrush(QColor(pixel.red, pixel.green, pixel.blue)), 1));
+                m_Painter->drawPoint(x,y);
+            }
+        }
+    }
     m_Painter->end();
 }
 

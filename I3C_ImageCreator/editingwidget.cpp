@@ -27,6 +27,9 @@ void EditingWidget::instanciateImageAndLS()
     m_Image = new Image();
     m_PixmapLayerStack = new PixmapLayerStack(this);
 
+    /* Preset Selected Color */
+    emit pingSelectedColor();
+
     /* Make connections */
     connect(m_History, SIGNAL(undoCall(LocalHistory*)),
             m_PixmapLayerStack->getUIQLabel(), SLOT(historyUndoCall(LocalHistory*)));

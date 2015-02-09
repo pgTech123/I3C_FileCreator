@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_PaintingWidget, SIGNAL(selectedColor(int,int,int)), m_EditingWidget, SLOT(selectedColor(int,int,int)));
     connect(m_BrushWidget,SIGNAL(brushSelected(int)), m_EditingWidget, SLOT(selectedPen(int)));
     connect(m_BrushWidget, SIGNAL(eraserSelected(int)), m_EditingWidget,SLOT(selectedEraser(int)));
+    connect(m_EditingWidget, SIGNAL(pingSelectedColor()), m_PaintingWidget, SLOT(emitSelectedColor()));
 
     /* Init Project Status */
     m_bAllChangesSaved = true;

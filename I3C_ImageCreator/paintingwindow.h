@@ -37,6 +37,9 @@ public:
     ~PaintingWindow();
     void closeEvent(QCloseEvent *closeEvent);
 
+public slots:
+    void emitSelectedColor();
+
 private:
     void setPresetColors();
 

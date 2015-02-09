@@ -33,6 +33,8 @@ PaintingWindow::PaintingWindow(QWidget *parent) :
         }
     }
     setPresetColors();
+    m_iColorPadSelected = 0;    //Preset first color
+    m_ColorPads[m_iColorPadSelected].select();
 }
 
 PaintingWindow::~PaintingWindow()
@@ -46,6 +48,15 @@ void PaintingWindow::closeEvent(QCloseEvent *closeEvent)
     closeEvent->ignore();
     this->hide();
     emit hidden();
+}
+
+void PaintingWindow::emitSelectedColor()
+{
+    int r = m_ColorPads[m_iColorPadSelected].getRed();
+    int g = m_ColorPads[m_iColorPadSelected].getGreen();
+    int b = m_ColorPads[m_iColorPadSelected].getBlue();
+
+    emit selectedColor(r,g,b);
 }
 
 void PaintingWindow::setPresetColors()

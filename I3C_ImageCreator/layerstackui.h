@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QResizeEvent>
 #include <QRect>
+#include <math.h>
 #include "layerstack.h"
 #include "layerstackuihistory.h"
 #include "BrushType.h"
@@ -38,7 +39,7 @@ private:
     void draw(int x, int y);
     void erase(int x, int y);
 
-    void updateDisplayedLayer(int x, int y, int r, int g, int b);
+    void updateDisplayedLayer();
     void saveInHistory(int x, int y, int r, int g, int b, int a = 255);
     void addPixmapInTransparency(QPixmap *layer);
 
@@ -60,6 +61,7 @@ signals:
 
 private:
     LayerStack *m_LayerStack;
+    int m_iSideSize;
 
     /* Event */
     bool m_bMouseButtonDwn;
