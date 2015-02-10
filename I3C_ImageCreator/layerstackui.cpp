@@ -98,38 +98,67 @@ void layerStackUI::eventEditImageTriggered(int x, int y)
         y = y * m_dPixelToPixelFactor;
 
         /* Patch for mouse speed */
-//        if(m_iLastX > 0 && m_iLastY > 0){
-//            int dx = m_iLastX - x;
-//            int dy = m_iLastY - y;
+        if(m_iLastX > 0 && m_iLastY > 0){
+            int dx = m_iLastX - x;
+            int dy = m_iLastY - y;
 
-//            /*Something to patch*/
-//            if(abs(dx) > 1 || abs(dy) >1){
+            /* Some pixels to patch */
+            if(abs(dx) > 1 || abs(dy) >1){
+                if(abs(dx) > abs(dy)){
+                    double a = (double)dy/(double)dx;
 
-//                if(abs(dx) < abs(dy)){
-//                    double a = dx/dy;
+                    if(m_iLastX < x){
+                        for(int patchX = m_iLastX; patchX < x; patchX++)
+                        {
+                            if(m_BrushType == Eraser){
+                                erase(patchX, m_iLastY + a*(double)(patchX-m_iLastX));
+                            }
+                            else if(m_BrushType ==Pen){
+                                draw(patchX, m_iLastY + a*(double)(patchX-m_iLastX));
+                            }
+                        }
+                    }
+                    else{
+                        for(int patchX = x; patchX < m_iLastX; patchX++)
+                        {
+                            if(m_BrushType == Eraser){
+                                erase(patchX, y + a*(double)(patchX-x));
+                            }
+                            else if(m_BrushType ==Pen){
+                                draw(patchX, y + a*(double)(patchX-x));
+                            }
+                        }
+                    }
+                }
+                else{
+                    double a = (double)dx/(double)dy;
 
-//                    for(int i = 0; i < dy; i++){
-//                        if(m_BrushType == Eraser){
-//                            erase(x1+a*i, y1+i);
-//                        }
-//                        else if(m_BrushType ==Pen){
-//                            draw(x1+a*i, y1+i);
-//                        }
-//                    }
-//                }
-//                else{
-//                    double a = dy/dx;
-//                    for(int i = 0; i < dx; i++){
-//                        if(m_BrushType == Eraser){
-//                            erase(x1+i, y1+a*i);
-//                        }
-//                        else if(m_BrushType ==Pen){
-//                            draw(x1+i, y1+a*i);
-//                        }
-//                    }
-//                }
-//            }
-//        }
+
+                    if(m_iLastY < y){
+                        for(int patchY = m_iLastY; patchY < y; patchY++)
+                        {
+                            if(m_BrushType == Eraser){
+                                erase(m_iLastX + a*(double)(patchY-m_iLastY), patchY);
+                            }
+                            else if(m_BrushType ==Pen){
+                                draw(m_iLastX + a*(double)(patchY-m_iLastY), patchY);
+                            }
+                        }
+                    }
+                    else{
+                        for(int patchY = y; patchY < m_iLastY; patchY++)
+                        {
+                            if(m_BrushType == Eraser){
+                                erase(x + a*(double)(patchY-y), patchY);
+                            }
+                            else if(m_BrushType ==Pen){
+                                draw(x + a*(double)(patchY-y), patchY);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         if(m_BrushType == Eraser){
             erase(x, y);
@@ -137,6 +166,11 @@ void layerStackUI::eventEditImageTriggered(int x, int y)
         else if(m_BrushType ==Pen){
             draw(x, y);
         }
+
+        m_iLastX = x;
+        m_iLastY = y;
+
+        currentLayerChanged();
     }
 }
 
@@ -229,11 +263,6 @@ void layerStackUI::draw(int x, int y)
                 }
             }
         }
-
-        m_iLastX = x;
-        m_iLastY = y;
-
-        currentLayerChanged();
     }
 }
 
@@ -271,11 +300,6 @@ void layerStackUI::erase(int x, int y)
                 }
             }
         }
-
-        m_iLastX = x;
-        m_iLastY = y;
-
-        currentLayerChanged();
     }
 }
 
